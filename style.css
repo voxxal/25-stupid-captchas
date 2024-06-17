@@ -136,6 +136,10 @@ input {
   width: 600px;
 }
 
+.captcha-model:has(.single-input) {
+  width: 400px;
+}
+
 .captcha-model .model-bottom-bar {
   display: flex;
   justify-content: flex-end;
@@ -219,6 +223,12 @@ input {
   -ms-user-select: none;
 }
 
+.single-input input {
+  width: 100%;
+  border: 2px solid #c1c1c1;
+  border-radius: 2px;
+}
+
 .top-padding {
   height: calc(50vh - 181px / 2);
 }
@@ -282,7 +292,6 @@ input {
   background: #efefe6;
   border-radius: 2px;
 }
-
 
 * {
   font-family: "Helvetica", "Arial", sans-serif;

@@ -182,7 +182,6 @@
             const ctx = canvas.getContext("2d");
             const data = ctx.getImageData(0, 0, 400, 400);
             let start = null;
-            console.log(line)
             if (line.valid && line.start[0] >= 185 && line.start[0] <= 199 && line.start[1] >= 32 && line.start[1] <= 46
                 && line.end[0] >= 201 && line.end[0] <= 215 && line.end[1] >= 352 && line.end[1] <= 366) {
                 // TODO don't wimp out on flood fill
@@ -380,7 +379,6 @@
                 ctx.fill();
                 if (level8State.patties[1]) {
                     level8State.patties[1] -= dt;
-                    console.log(level8State.patties)
                     if (level8State.patties[1] > 0) {
                         ctx.fillStyle = "#FD8A7C";
                     } else if (level8State.patties[1] > -10) {
@@ -528,12 +526,14 @@
         }
 
         let level10Cells = null;
-        let level10 = null;
+        let level10 = Array(4).fill(0).map(() => Array(4).fill(0));
+        const level11 = "bDKlrDS"
 
+
+        const eitherOr = (s1, s2) => s1 == "solved" || s2 == "solved" ? "solved" : "wrong";
         document.addEventListener('alpine:init', () => {
             level8Reset();
             level10Cells = Alpine.reactive(Array(4).fill(0).map(() => Array(4).fill(null)));
-            level10 = Array(4).fill(0).map(() => Array(4).fill(0));
             fetch('https://corsproxy.io/?' + encodeURIComponent(`https://www.nytimes.com/svc/connections/v2/${new Date().toISOString().substring(0, 10)}.json`))
                 .then(res => res.json())
                 .then(level10Init)
@@ -620,7 +620,6 @@
                     <div>CAPTCHA 1</div>
                 </div>
             </div>
-            <!--  -->
             <div class="captcha-model-container">
                 <div x-show="state == 'open' || state == 'wrong'"
                     x-effect="if (state == 'open' || state == 'wrong') $nextTick(() => $el.focus())"
@@ -866,7 +865,6 @@
                     <div>CAPTCHA 5</div>
                 </div>
             </div>
-            <!--  -->
             <div class="captcha-model-container">
                 <div x-show="state == 'open' || state == 'wrong'"
                     x-effect="if (state == 'open' || state == 'wrong') $nextTick(() => $el.focus())"
@@ -1049,6 +1047,7 @@
                 </div>
             </div>
         </div>
+        <!-- LEVEL 9 -->
         <div class="level" x-show="$store.game.level >= 9" x-transition
             x-data="{ state: 'unchecked', grid: make4x4() }">
             <div class="error">
@@ -1104,6 +1103,7 @@
                 </div>
             </div>
         </div>
+        <!-- LEVEL 10 -->
         <div class="level" x-show="$store.game.level >= 10" x-transition
             x-data="{ state: 'unchecked', grid: make4x4() }">
             <div class="error">
@@ -1157,23 +1157,169 @@
                 </div>
             </div>
         </div>
+        <!-- LEVEL 11 -->
+        <div class="level" x-show="$store.game.level >= 11" x-transition x-data="{ state: 'unchecked', answer: '' }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                My handwriting is so bad it should be classified as a CAPTCHA.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 11</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state == 'open' || state == 'wrong'"
+                    x-effect="if (state == 'open' || state == 'wrong') $nextTick(() => $el.focus())"
+                    x-transition.opacity class="captcha-model"
+                    @focusout="!$el.contains($event.relatedTarget) && state != 'solved' &&  (state = 'unchecked')"
+                    tabindex="-1">
+                    <div class="header">
+                        <div>Type the characters below</div>
+                        <br />
+                        <img src="assets/level11.jpg" style="width:100%;" />
+                    </div>
+                    <div class="single-input">
+                        <input x-model="answer" />
+                    </div>
+                    <div x-show="state == 'wrong'" class="error try-again">Please try again.</div>
 
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button @click="state = $store.game.solveEq(11, level11, answer)">VERIFY</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- LEVEL 12 -->
+        <div class="level" x-show="$store.game.level >= 12" x-transition
+            x-data="{ state: 'unchecked', grid: make4x4(), openTime: null }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Please ponder on this one for a bit.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 12</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state == 'open' || state == 'wrong'"
+                    x-effect="if (state == 'open' || state == 'wrong') $nextTick(() => $el.focus())"
+                    x-transition.opacity class="captcha-model"
+                    @focusout="!$el.contains($event.relatedTarget) && state != 'solved' &&  (state = 'unchecked')"
+                    tabindex="-1">
+                    <div class="header">
+                        <div>Select all squares with</div>
+                        <div>the ship of theseus</div>
+                        <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
+                            (every part is replaced)
+                        </div>
+                    </div>
+                    <div class="four-by-four">
+                        <template x-for="(row, y) in grid">
+                            <template x-for="(cell, x) in row">
+                                <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
+                                    <img src="./assets/ship-of-theseus.jpg"
+                                        :style="{ left: `-${x * 100}%`, top: `-${(3 - y) * 100}%` }" />
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                    <div x-show="state == 'wrong'" class="error try-again">Please try again.</div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
+                            @click="() => { state = eitherOr($store.game.solve4x4(12, level2, grid), $store.game.solveGridCount(12, 8, grid)); if (state == 'solved') grid = make4x4() }"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- LEVEL 13 -->
+        <div class="level" x-show="$store.game.level >= 13" x-transition x-data="{ state: 'unchecked', orderReady: false }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Any self respecting human will be able to reach 10.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 13</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state == 'open' || state == 'wrong'"
+                    x-effect="if (state == 'open' || state == 'wrong') $nextTick(() => {$el.focus(); level8StartRender();})"
+                    x-transition.opacity class="captcha-model"
+                    @focusout="!$el.contains($event.relatedTarget) && state != 'solved' && (state = 'unchecked', level8State.running = false)"
+                    tabindex="-1">
+                    <div class="header">
+                        <div>Play</div>
+                        <div>flappy bird</div>
+                        <div :style="{ opacity: 0.5 }">
+                            Get a score of at least 10
+                        </div>
+                    </div>
+                    <div class="canvas">
+                        <canvas id="canvas-8" width="400" height="400" @mousedown="level8MouseDown"></canvas>
+                    </div>
+                    <div x-show="state == 'wrong'" class="error try-again">Please try again.</div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button :disabled="level8State.stack.length === 0" @click="() => {
+                                    state = level8Validate();
+                                    if (state === 'solved') {
+                                        $store.game.solve(8);
+                                        $store.game.money += 5;
+                                    }
+                                }">FUFILL ORDER</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!--
-    Robot uprising (xkcd 2228)
-    Click all squares with the ship of thesus
     Flappy bird
     Select all valid moves for this knight.
-    NYT Connections "select purple"
     Select all squares where there is a ghost (upsell on the GHOSTBUSTER II, only a 10 second delivery time!)
     Take control of our self driving car
-    Read my handwriting
     Don't shoot the puppy
     Select all traffic lights (quick the car is approaching the intersection)
     Rock paper sissors (beat last)
     Select all that would be hard to eat
     Select all vehicles in the park
-    Defuse the bomb (please read this 20 page manual on how to defuse the bomb)
     Measuring Frustration
+    click all squares that used to be dinosaurs
+    Something stupid about proteins
+    something stupid about code compiling
     Turing test
  -->
         <div class="bottom-padding" x-show="$store.game.level >= 1"></div>
