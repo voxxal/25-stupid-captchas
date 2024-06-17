@@ -182,6 +182,7 @@
             const ctx = canvas.getContext("2d");
             const data = ctx.getImageData(0, 0, 400, 400);
             let start = null;
+            console.log(line)
             if (line.valid && line.start[0] >= 185 && line.start[0] <= 199 && line.start[1] >= 32 && line.start[1] <= 46
                 && line.end[0] >= 201 && line.end[0] <= 215 && line.end[1] >= 352 && line.end[1] <= 366) {
                 // TODO don't wimp out on flood fill
@@ -196,17 +197,15 @@
         let level8State = {};
         const level8ProperStack = ["bottomBun", "spread", "choppedTomato", "choppedLettuce", "cookedPatty", "cheese", "choppedOnion", "topBun"]
         const level8Reset = () => {
-            level8State = {
+            level8State = Alpine.reactive({
                 running: false,
                 stack: [],
                 patties: [null, null],
                 held: null,
                 mouse: [0, 0],
                 lastTick: null,
-            }
+            })
         }
-        level8Reset();
-
 
         const level8Items = {
             topBun: {
@@ -498,17 +497,51 @@
             let foundPatty = false;
             for (let i = 1; i < stack.length - 1; i++) {
                 if (["uncookedPatty", "burntPatty", "topBun"].includes(stack[i])) return "wrong";
-                if (stack[i] === "cheese" && stack[i + 1] === "cookedPatty") return "wrong";
+                if (stack[i] === stack[i + 1]) return "wrong";
+                if (stack[i - 1] !== "cookedPatty" && stack[i] === "cheese" && stack[i + 1] === "cookedPatty") return "wrong";
                 if (stack[i] === "cookedPatty") foundPatty = true;
             }
-            return "solved";
+            return foundPatty ? "solved" : "wrong";
         }
 
+        const level9Cells = [
+            [2, 0, 1, 0],
+            [0, 0, 3, 0],
+            [3, 0, 0, 0],
+            [0, 1, 0, 1],
+        ]
+
+        const level9 = make4x4("0000", "1100", "0101", "0000");
+        const level10Init = (json) => {
+            for (const i in json.categories) {
+                const category = json.categories[i];
+                for (const { position, content } of category.cards) {
+                    level10Cells[Math.floor(position / 4)][position % 4] = content;
+                }
+
+                if (i === "3") {
+                    for (const { position } of category.cards) {
+                        level10[Math.floor(position / 4)][position % 4] = 1;
+                    }
+                }
+            }
+        }
+
+        let level10Cells = null;
+        let level10 = null;
+
         document.addEventListener('alpine:init', () => {
+            level8Reset();
+            level10Cells = Alpine.reactive(Array(4).fill(0).map(() => Array(4).fill(null)));
+            level10 = Array(4).fill(0).map(() => Array(4).fill(0));
+            fetch('https://corsproxy.io/?' + encodeURIComponent(`https://www.nytimes.com/svc/connections/v2/${new Date().toISOString().substring(0, 10)}.json`))
+                .then(res => res.json())
+                .then(level10Init)
             Alpine.store('game', {
                 started: false,
                 startedDots: 0,
-                level: 8,
+                level: 25,
+                money: 0,
 
                 startGame() {
                     if (this.started) return;
@@ -555,6 +588,7 @@
 <body>
     <main x-data x-cloak>
         <div class="top-padding"></div>
+        <div x-text="'$' + $store.game.money.toFixed(2)" x-show="$store.game.money" class="money-counter"></div>
         <div class="create-form">
             <label for="fake-username">Username:</label>
             <input value="25 STUPID CAPTCHAS" name="fake-username" disabled></input><br />
@@ -994,30 +1028,142 @@
                         <div>Put together a</div>
                         <div>burger</div>
                         <div :style="{ opacity: 0.5 }">
-                            Build it properly
+                            Make it right OK?
                         </div>
                     </div>
                     <div class="canvas">
                         <canvas id="canvas-8" width="400" height="400" @mousedown="level8MouseDown"
-                            @mouseup="level8MouseUp($event) ? orderReady = true : null"
-                            @mousemove="level8MouseMove"></canvas>
+                            @mouseup="level8MouseUp" @mousemove="level8MouseMove"></canvas>
                     </div>
                     <div x-show="state == 'wrong'" class="error try-again">Please try again.</div>
                     <hr />
                     <div class="model-bottom-bar">
-                        <button :disabled="!orderReady" @click="state = level8Validate()">FUFILL ORDER</button>
+                        <button :disabled="level8State.stack.length === 0" @click="() => {
+                            state = level8Validate();
+                            if (state === 'solved') {
+                                $store.game.solve(8);
+                                $store.game.money += 5;
+                            }
+                        }">FUFILL ORDER</button>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Next error message: I have been advised to pay you for your time. -->
+        <div class="level" x-show="$store.game.level >= 9" x-transition
+            x-data="{ state: 'unchecked', grid: make4x4() }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                I have been advised to pay you for your time.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 9</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state == 'open' || state == 'wrong'"
+                    x-effect="if (state == 'open' || state == 'wrong') $nextTick(() => $el.focus())"
+                    x-transition.opacity class="captcha-model"
+                    @focusout="!$el.contains($event.relatedTarget) && state != 'solved' &&  (state = 'unchecked')"
+                    tabindex="-1">
+                    <div class="header">
+                        <div>Select all squares with</div>
+                        <div>mines</div>
+                        <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
+                        </div>
+                    </div>
+                    <div class="four-by-four">
+                        <template x-for="(row, y) in grid">
+                            <template x-for="(cell, x) in row">
+                                <div class="cell level9-cell" @click="row[x] = !row[x]" :class="cell && 'pressed'"
+                                    x-text="level9Cells[y][x] ? level9Cells[y][x] : ''" :style="{ 
+                                        color: ['','#536ad1','#3e843e','#c84848'][level9Cells[y][x]], 
+                                        background: level9Cells[y][x] ? '#e0e0e0' :'#c0c0c0'
+                                    }">
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                    <div x-show="state == 'wrong'" class="error try-again">Please try again.</div>
+
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
+                            @click="() => { state = $store.game.solve4x4(9, level9, grid); if (state == 'solved') grid = make4x4() }"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="level" x-show="$store.game.level >= 10" x-transition
+            x-data="{ state: 'unchecked', grid: make4x4() }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                I hope you like word games.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 10</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state == 'open' || state == 'wrong'"
+                    x-effect="if (state == 'open' || state == 'wrong') $nextTick(() => $el.focus())"
+                    x-transition.opacity class="captcha-model"
+                    @focusout="!$el.contains($event.relatedTarget) && state != 'solved' &&  (state = 'unchecked')"
+                    tabindex="-1">
+                    <div class="header">
+                        <div>Select all squares corrisponding with the</div>
+                        <div>purple category</div>
+                        <div :style="{ opacity:  0.5 }">Check New York Times Connections for more info.
+                        </div>
+                    </div>
+                    <div class="four-by-four">
+                        <template x-for="(row, y) in grid">
+                            <template x-for="(cell, x) in row">
+                                <div class="cell level10-cell" @click="row[x] = !row[x]" :class="cell && 'pressed'"
+                                    x-text="level10Cells[y][x]"
+                                    :style="{ fontSize: level10Cells[y][x]?.length > 9 ? '0.6rem' : '1rem' }">
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                    <div x-show="state == 'wrong'" class="error try-again">Please try again.</div>
+
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
+                            @click="() => { state = $store.game.solve4x4(10, level10, grid); if (state == 'solved') grid = make4x4() }"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!--
-    Put together a hamburger (you get paid for this, later on you buy the GHOSTBUSTER II)
-    Minesweeper captcha (xkcd 2496)
     Robot uprising (xkcd 2228)
     Click all squares with the ship of thesus
     Flappy bird
-    Select all valid moves for this knight
+    Select all valid moves for this knight.
+    NYT Connections "select purple"
     Select all squares where there is a ghost (upsell on the GHOSTBUSTER II, only a 10 second delivery time!)
     Take control of our self driving car
     Read my handwriting
