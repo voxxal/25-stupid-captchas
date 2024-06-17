@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>stupid captchas</title>
+    <link href="style.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@3/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <script>
+        const make4x4 = (a = "0000", b = "0000", c = "0000", d = "0000") =>
+            [
+                a.split("").map(x => +x),
+                b.split("").map(x => +x),
+                c.split("").map(x => +x),
+                d.split("").map(x => +x)
+            ];
+        const matrixMatch = (m1, m2) => {
+            for (let y = 0; y < m1.length; y++) {
+                for (let x = 0; x < m1[y].length; x++) {
+                    if (m1[y][x] != m2[y][x] && m1[y][x] != 2) return false;
+                }
+            }
+            return true;
+        }
+
+        function shuffle(array) {
+            let currentIndex = array.length;
+            while (currentIndex != 0) {
+                let randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+        }
+
+
+        const level1 = make4x4("0011", "0011", "0211", "0011")
+        const level2 = make4x4()
+        const level2ObjectivelyWrong = make4x4("0000", "1110", "1111", "0000")
+        const level3 = "D"
+
+        // LEVEL 4 Stuff
+        const fixWiring = new Image();
+        fixWiring.src = "./assets/fix-wiring.png"
+        const level4Sounds = {
+            open: new Audio("./assets/level4open.ogg"),
+            connect: [
+                new Audio("./assets/level4connect1.ogg"),
+                new Audio("./assets/level4connect2.ogg"),
+                new Audio("./assets/level4connect3.ogg")
+            ],
+            solve: new Audio("./assets/level4solve.ogg")
+        }
+
+        const level4Colors = ["#fe0000", "#2626ff", "#fdea00", "#fe00ff"]
+        const level4Render = ({ state, correctWiresIn, wiresIn, wireHeld }, e = null) => {
+            const canvas = document.getElementById("canvas-4");
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, 400, 400);
+            ctx.drawImage(fixWiring, 0, 0);
+            for (let i = 0; i < 4; i++) {
+                ctx.fillStyle = level4Colors[i];
+                ctx.fillRect(360, 75 + i * 82, 40 - 2, 15);
+                ctx.fillStyle = "#cc623d"
+                ctx.fillRect(360 - 8, 75 + i * 82 + 3, 8, 9);
+            }
+
+            for (let i = 0; i < 4; i++) {
+                ctx.fillStyle = level4Colors[correctWiresIn[i]];
+                ctx.fillRect(3, 75 + i * 82, 40 - 2, 15);
+                ctx.fillStyle = "#cc623d"
+                ctx.fillRect(3 + 40 - 2, 75 + i * 82 + 3, 8, 9);
+            }
+
+            for (let i = 0; i < 4; i++) {
+                if (wiresIn[i] == -1) continue;
+                ctx.lineWidth = 15;
+                ctx.beginPath();
+                ctx.strokeStyle = level4Colors[correctWiresIn[i]]
+                ctx.moveTo(40, 75 + i * 82 + 7.5)
+                ctx.lineTo(360, 75 + wiresIn[i] * 82 + 7.5);
+                ctx.closePath();
+                ctx.stroke();
+            }
+            if (e != null && wireHeld != -1) {
+                const rect = e.target.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                ctx.lineWidth = 15;
+                ctx.beginPath();
+                ctx.strokeStyle = level4Colors[correctWiresIn[wireHeld]]
+                ctx.moveTo(40, 75 + wireHeld * 82 + 7.5)
+                ctx.lineTo(x, y);
+                ctx.closePath();
+                ctx.stroke();
+            }
+        }
+
+        const level4Selection = (e) => {
+            const rect = e.target.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            if (x > 0 && x < 65) {
+                for (let i = 0; i < 4; i++) {
+                    if (y > 70 + i * 82 && y < 90 + i * 82) {
+                        return i;
+                    }
+                }
+            }
+            return -1;
+        }
+
+        const level4Connect = (e) => {
+            const rect = e.target.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            if (x > 345 && x < 400) {
+                for (let i = 0; i < 4; i++) {
+                    if (y > 70 + i * 82 && y < 90 + i * 82) {
+                        // FIXME only fire sound if wireHeld is not -1
+                        level4Sounds.connect[Math.floor(Math.random() * 3)].play();
+                        return i;
+                    }
+                }
+            }
+            return -1;
+        }
+        const level4CheckWin = (correctWiresIn, wiresIn) => {
+            for (let i = 0; i < 4; i++) {
+                if (correctWiresIn[i] != wiresIn[i]) return false;
+            }
+            return true;
+        }
+
+
+        const maze = new Image();
+        maze.src = "./assets/maze.png";
+
+        const mazeEmpty = new Image();
+        mazeEmpty.src = "./assets/maze-empty.png";
+        let line = {};
+
+        let prevx = -1;
+        let prevy = -1;
+
+        const level7Clear = () => {
+            const canvas = document.getElementById("canvas-7");
+            const ctx = canvas.getContext("2d");
+            line = {};
+            prevx = -1;
+            prevy = -1;
+            ctx.clearRect(0, 0, 400, 400);
+            ctx.drawImage(maze, 0, 0);
+        }
+
+        // TODO force mouse to be on circle before starting
+        const level7Draw = (e) => {
+            const canvas = document.getElementById("canvas-7");
+            const ctx = canvas.getContext("2d");
+            const rect = e.target.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            if (prevx == -1) { prevx = x }
+            if (prevy == -1) { prevy = y; line = { start: [x, y], end: [x, y], valid: true } };
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.strokeStyle = "#ff0000"
+            ctx.moveTo(prevx, prevy)
+            ctx.lineTo(x, y);
+            ctx.closePath();
+            ctx.stroke();
+            prevx = x;
+            prevy = y;
+            ctx.drawImage(mazeEmpty, 0, 0);
+            if (x >= 50 && x <= 350 && y >= 50 && y <= 350) valid = false;
+            line.end = [x, y];
+        }
+        const level7CheckWin = () => {
+            const canvas = document.getElementById("canvas-7");
+            const ctx = canvas.getContext("2d");
+            const data = ctx.getImageData(0, 0, 400, 400);
+            let start = null;
+            if (line.valid && line.start[0] >= 185 && line.start[0] <= 199 && line.start[1] >= 32 && line.start[1] <= 46
+                && line.end[0] >= 201 && line.end[0] <= 215 && line.end[1] >= 352 && line.end[1] <= 366) {
+                // TODO don't wimp out on flood fill
+                return true;
+            }
+            // for (let y = 32; y <= 46; y++) {
+            //     for (let x = 185; x <= 199; x++) {
+            //     }
+            // }
+            return false;
+        }
+        let level8State = {};
+        const level8ProperStack = ["bottomBun", "spread", "choppedTomato", "choppedLettuce", "cookedPatty", "cheese", "choppedOnion", "topBun"]
+        const level8Reset = () => {
+            level8State = {
+                running: false,
+                stack: [],
+                patties: [null, null],
+                held: null,
+                mouse: [0, 0],
+                lastTick: null,
+            }
+        }
+        level8Reset();
+
+
+        const level8Items = {
+            topBun: {
+                offset: [6.22, 23],
+                size: [52, 17],
+                drawIcon(ctx) {
+                    const path = new Path2D("M51.8996 14.1724C52.2203 16 51.7967 17 50.2823 17H1.7177C0.203321 17 -0.220323 16 0.100431 14.1724C1.79668 6.25262 7.84753 0 26.0001 0C44.1526 0 50.2035 6.25262 51.8996 14.1724Z");
+                    ctx.fillStyle = "#E08B4E"
+                    ctx.fill(path)
+                },
+            },
+            bottomBun: {
+                offset: [6, 32],
+                size: [52, 8],
+                drawIcon(ctx) {
+                    const path = new Path2D("M0.621268 2.48507C0.305694 1.22278 1.26041 0 2.56155 0H49.4384C50.7396 0 51.6943 1.22278 51.3787 2.48507L50.3787 6.48507C50.1561 7.37541 49.3562 8 48.4384 8H3.56155C2.64382 8 1.84385 7.37541 1.62127 6.48507L0.621268 2.48507Z")
+                    ctx.fillStyle = "#E08B4E"
+                    ctx.fill(path)
+                }
+            },
+            uncookedPatty: {
+                offset: [6, 29],
+                size: [52, 9],
+                drawIcon(ctx) {
+                    ctx.beginPath();
+                    ctx.roundRect(0, 0, 52, 9, 4)
+                    ctx.closePath();
+                    ctx.fillStyle = "#FD8A7C"
+                    ctx.fill()
+                }
+            },
+            cookedPatty: {
+                ignore: true,
+                offset: [6, 30],
+                size: [52, 7],
+                drawIcon(ctx) {
+                    ctx.beginPath();
+                    ctx.roundRect(0, 0, 52, 7, 4)
+                    ctx.closePath();
+                    ctx.fillStyle = "#662113"
+                    ctx.fill()
+                }
+            },
+            burntPatty: {
+                ignore: true,
+                offset: [6, 29],
+                size: [52, 9],
+                drawIcon(ctx) {
+                    ctx.beginPath();
+                    ctx.roundRect(0, 0, 52, 9, 4)
+                    ctx.closePath();
+                    ctx.fillStyle = "#1E1911"
+                    ctx.fill()
+                }
+            },
+            cheese: {
+                offset: [18.62, 13.75],
+                size: [32, 32],
+                drawIcon(ctx) {
+                    ctx.beginPath();
+                    ctx.rotate(8.74113 * Math.PI / 180);
+                    ctx.roundRect(0, 0, 32, 32, 2)
+                    ctx.closePath();
+                    ctx.fillStyle = "#F7C85D";
+                    ctx.fill();
+                },
+                stackSize: [52, 2],
+                drawStack(ctx) {
+                    ctx.fillStyle = "#F7C85D"
+                    ctx.beginPath();
+                    ctx.moveTo(0, 1.5);
+                    ctx.lineTo(52 / 2, 5);
+                    ctx.lineTo(52, 1.5);
+                    ctx.closePath();
+                    ctx.fill()
+                    ctx.beginPath();
+                    ctx.roundRect(0, 0, 52, 3, 4);
+                    ctx.closePath();
+                    ctx.fill()
+                }
+            },
+            tomato: {
+                offset: [18, 15],
+                size: [30, 29],
+                drawIcon(ctx) {
+                    const path = new Path2D("M15 5L11.1429 0L12.4286 5L6 1.66667L8.57143 5C9.78947 6.5 11.6842 7 15 7C18.3158 7 20.2105 6.5 21.4286 5L24 1.66667L17.5714 5L18.8571 0L15 5Z");
+                    ctx.beginPath();
+                    ctx.ellipse(15, 17, 15, 12, 0, 0, 2 * Math.PI);
+                    ctx.closePath();
+                    ctx.fillStyle = "#E53F34";
+                    ctx.fill();
+                    ctx.fillStyle = "#4A8C2B";
+                    ctx.fill(path);
+                },
+                stackSize: [52, 4],
+                drawStack(ctx) {
+                    ctx.fillStyle = "#E53F34"
+                    ctx.fillRect(0, 0, 52, 4);
+                }
+            },
+            lettuce: {
+                offset: [6, 22],
+                size: [52, 20],
+                stackSize: [52, 5],
+                drawIcon(ctx) {
+                    const path = new Path2D("M50.8521 9.95407C48.0389 7.27301 48.2018 8.70004 46.046 8.07074C45.2273 7.83188 39.3685 0 26.0148 0H25.9852C12.6316 0 6.77277 7.83188 5.95399 8.07074C3.79822 8.70004 3.96109 7.27301 1.14792 9.95407C-0.143175 11.1851 -0.4926 11.8251 0.869565 12.1436C2.92169 12.6229 2.73514 13.9075 4.20539 14.3546C5.98508 14.8951 6.71651 13.9075 9.58594 14.3117C12.0334 14.6563 12.1933 17.9391 14.663 17.9391C17.1326 17.9391 17.1326 16.7141 19.6008 16.7141C22.069 16.7141 23.5289 20 25.9985 20C28.4682 20 29.9266 16.7141 32.3963 16.7141C34.8659 16.7141 34.8659 17.9391 37.3341 17.9391C39.8038 17.9391 39.9637 14.6563 42.4111 14.3117C45.2806 13.909 46.0135 14.8951 47.7917 14.3546C49.2619 13.9075 49.0754 12.6244 51.1275 12.1436C52.4926 11.8267 52.1447 11.1851 50.8521 9.95407Z");
+                    ctx.fillStyle = "#4A8C2B";
+                    ctx.fill(path);
+                },
+                drawStack(ctx) {
+                    const path = new Path2D("M46.046 0C46.046 0 46.046 -5.16176e-05 50.8521 1.88333C52.1447 3.11438 52.4926 3.75593 51.1275 4.07288C49.0754 4.55367 49.2619 5.83678 47.7917 6.28388C46.0135 6.82438 45.2806 5.83831 42.4111 6.24101C39.9637 6.58552 39.8038 9.86832 37.3341 9.86832C34.8659 9.86832 34.8659 8.64339 32.3963 8.64339C29.9266 8.64339 28.4682 11.9293 25.9985 11.9293C23.5289 11.9293 22.069 8.64339 19.6008 8.64339C17.1326 8.64339 17.1326 9.86832 14.663 9.86832C12.1933 9.86832 12.0334 6.58552 9.58594 6.24101C6.71651 5.83678 5.98508 6.82438 4.20539 6.28388C2.73514 5.83678 2.92169 4.55214 0.869564 4.07288C-0.4926 3.7544 -0.143175 3.11438 1.14792 1.88333L5.95399 0H46.046Z");
+                    ctx.fillStyle = "#4A8C2B";
+                    ctx.fill(path);
+                }
+            }
+        }
+
+        const level8StartRender = () => {
+            const canvas = document.getElementById("canvas-8");
+            const ctx = canvas.getContext("2d");
+
+            if (level8State.running) return;
+            const loop = (ts) => {
+                if (!level8State.lastTick) level8State.lastTick = ts;
+                const dt = (ts - level8State.lastTick) / 1000;
+                if (!level8State.running) return;
+                ctx.fillStyle = "white"
+
+                ctx.clearRect(0, 0, 400, 400);
+                // TOP BAR
+                ctx.fillStyle = "black";
+                ctx.fillRect(0, 0, 400, 32);
+                {
+                    ctx.save();
+                    for (const [k, item] of Object.entries(level8Items)) {
+                        if (item.ignore) continue;
+                        ctx.save();
+                        ctx.scale(0.5, 0.5)
+                        ctx.translate(...item.offset);
+                        item.drawIcon(ctx);
+                        ctx.restore();
+                        ctx.translate(36, 0);
+                    }
+                    ctx.restore();
+                }
+                // PATTY COOKING
+                ctx.fillStyle = "#555";
+                ctx.fillRect(0, 36, 198, 400 - 36);
+                ctx.fillStyle = "black";
+                ctx.beginPath()
+                ctx.arc(100, 36 + 96, 64, 0, 2 * Math.PI);
+                ctx.closePath()
+                ctx.fill();
+                if (level8State.patties[0]) {
+                    level8State.patties[0] -= dt;
+                    if (level8State.patties[0] > 0) {
+                        ctx.fillStyle = "#FD8A7C";
+                    } else if (level8State.patties[0] > -10) {
+                        ctx.fillStyle = "#662113";
+                    } else {
+                        ctx.fillStyle = "#1E1911";
+                    }
+                    ctx.beginPath()
+                    ctx.arc(100, 36 + 96, 48, 0, 2 * Math.PI)
+                    ctx.closePath()
+                    ctx.fill();
+                }
+                ctx.fillStyle = "black";
+                ctx.beginPath()
+                ctx.arc(100, 400 - 96, 64, 0, 2 * Math.PI);
+                ctx.closePath()
+                ctx.fill();
+                if (level8State.patties[1]) {
+                    level8State.patties[1] -= dt;
+                    console.log(level8State.patties)
+                    if (level8State.patties[1] > 0) {
+                        ctx.fillStyle = "#FD8A7C";
+                    } else if (level8State.patties[1] > -10) {
+                        ctx.fillStyle = "#662113";
+                    } else {
+                        ctx.fillStyle = "#1E1911";
+                    }
+                    ctx.beginPath()
+                    ctx.arc(100, 400 - 96, 48, 0, 2 * Math.PI)
+                    ctx.closePath()
+                    ctx.fill();
+                }
+
+
+                // STACK
+                ctx.fillStyle = "#B2FFFF";
+                ctx.fillRect(202, 36, 198, 400 - 36);
+                ctx.fillStyle = "#966F33";
+                ctx.fillRect(202, 400 - 36, 198, 36);
+                let height = 400 - 36;
+
+                for (const itemId of level8State.stack) {
+                    const item = level8Items[itemId];
+                    const size = item?.stackSize ?? item.size;
+                    ctx.save();
+                    height -= size[1] * 2
+                    ctx.translate(202, height);
+                    ctx.translate(size[0], 0);
+                    ctx.scale(2, 2);
+                    item?.drawStack ? item.drawStack(ctx) : item.drawIcon(ctx);
+                    ctx.restore();
+                }
+
+                if (level8State.held != null) {
+                    const item = level8Items[level8State.held];
+                    ctx.save();
+                    ctx.translate(...level8State.mouse);
+                    ctx.translate(-item.size[0], -item.size[1])
+                    ctx.scale(2, 2);
+                    item.drawIcon(ctx);
+                    ctx.restore();
+                }
+                level8State.lastTick = ts;
+                requestAnimationFrame(loop);
+            }
+            level8State.running = true;
+            requestAnimationFrame(loop);
+        }
+
+        const level8MouseDown = (e) => {
+            const rect = e.target.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            if (y > 0 && y < 40) {
+                let i = 0;
+                for (const [k, item] of Object.entries(level8Items)) {
+                    if (item.ignore) continue;
+                    if (x > i * 36 && x < (i + 1) * 36) {
+                        level8State.held = k;
+                        return k;
+                    }
+                    i++;
+                }
+            }
+            //                 ctx.arc(100, 36 + 96, 64, 0, 2 * Math.PI);
+            if (Math.hypot(x - 100, y - (36 + 96)) < 64 && level8State.patties[0]) {
+                level8State.held = level8State.patties[0] > 0 ? "uncookedPatty" : level8State.patties[0] > -10 ? "cookedPatty" : "burntPatty";
+                level8State.patties[0] = null;
+                return level8State.held;
+            }
+
+            if (Math.hypot(x - 100, y - (400 - 96)) < 64 && level8State.patties[1]) {
+                level8State.held = level8State.patties[1] > 0 ? "uncookedPatty" : level8State.patties[1] > -10 ? "cookedPatty" : "burntPatty";
+                level8State.patties[1] = null;
+                return level8State.held;
+            }
+            level8State.held = null;
+            return null;
+        }
+
+        const level8MouseUp = (e) => {
+            const rect = e.target.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            if (level8State.held === "uncookedPatty" && x <= 198 && y >= 36) {
+                const slot = +(y >= 200)
+                level8State.patties[slot] = 10
+            }
+            if (level8State.held && x >= 202 && y >= 36) {
+                level8State.stack.push(level8State.held);
+                level8State.held = null;
+                return true;
+            }
+            level8State.held = null;
+        }
+
+        const level8MouseMove = (e) => {
+            const rect = e.target.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            level8State.mouse = [x, y];
+        }
+
+        const level8Validate = () => {
+            const stack = level8State.stack;
+            level8State.stack = [];
+            const validWrapping =
+                // bun wrap
+                (stack[0] === "bottomBun" && stack[stack.length - 1] === "topBun") ||
+                // lettuce wrap
+                (stack[0] === stack[stack.length - 1] === "lettuce");
+            if (!validWrapping) return "wrong";
+            let foundPatty = false;
+            for (let i = 1; i < stack.length - 1; i++) {
+                if (["uncookedPatty", "burntPatty", "topBun"].includes(stack[i])) return "wrong";
+                if (stack[i] === "cheese" && stack[i + 1] === "cookedPatty") return "wrong";
+                if (stack[i] === "cookedPatty") foundPatty = true;
+            }
+            return "solved";
+        }
+
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('game', {
+                started: false,
+                startedDots: 0,
+                level: 8,
+
+                startGame() {
+                    if (this.started) return;
+                    this.started = true;
+                    for (let i = 0; i <= 2; i++) {
+                        setTimeout(() => {
+                            this.startedDots += 1;
+                        }, i * 1000);
+                    }
+                    setTimeout(() => {
+                        this.level = 1;
+                    }, 3000);
+                },
+                solve(level) {
+                    this.level = Math.max(level + 1, this.level);
+                    return "solved"
+                },
+                solve4x4(level, correct, user) {
+                    if (matrixMatch(correct, user)) {
+                        this.level = Math.max(level + 1, this.level);
+                        return "solved"
+                    }
+                    return "wrong"
+                },
+                solveGridCount(level, count, user) {
+                    if (user.flat().reduce((acc, v) => acc + v, 0) >= count) {
+                        this.level = Math.max(level + 1, this.level);
+                        return "solved"
+                    }
+                    return "wrong"
+                },
+                solveEq(level, correct, user) {
+                    if (correct === user) {
+                        this.level = Math.max(level + 1, this.level);
+                        return "solved"
+                    }
+                    return "wrong"
+                },
+            })
+        })
+    </script>
+</head>
+
+<body>
+    <main x-data x-cloak>
+        <div class="top-padding"></div>
+        <div class="create-form">
+            <label for="fake-username">Username:</label>
+            <input value="25 STUPID CAPTCHAS" name="fake-username" disabled></input><br />
+            <label for="fake-password">Password:</label>
+            <input value="by aiden shi" name="fake-password" disabled></input><br />
+            <button class="create-button" @click="$store.game.startGame()"
+                x-text="$store.game.startedDots == 0 ? 'Create Account' : 'Creating' + '.'.repeat($store.game.startedDots)">Create
+                Account</button>
+        </div>
+        <!-- LEVEL 1 -->
+        <div class="level" x-show="$store.game.level >= 1" x-transition
+            x-data="{ state: 'unchecked', grid: make4x4() }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                We noticed some suspicious activity. Please complete this CAPTCHA to continue.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 1</div>
+                </div>
+            </div>
+            <!--  -->
+            <div class="captcha-model-container">
+                <div x-show="state == 'open' || state == 'wrong'"
+                    x-effect="if (state == 'open' || state == 'wrong') $nextTick(() => $el.focus())"
+                    x-transition.opacity class="captcha-model"
+                    @focusout="!$el.contains($event.relatedTarget) && state != 'solved' &&  (state = 'unchecked')"
+                    tabindex="-1">
+                    <div class="header">
+                        <div>Select all squares with</div>
+                        <div>fire hydrants</div>
+                        <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
+                        </div>
+                    </div>
+                    <div class="four-by-four">
+                        <template x-for="(row, y) in grid">
+                            <template x-for="(cell, x) in row">
+                                <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
+                                    <img src="./assets/fh.png"
+                                        :style="{ left: `-${x * 100}%`, top: `-${(3 - y) * 100}%` }" />
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                    <div x-show="state == 'wrong'" class="error try-again">Please try again.</div>
+
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
+                            @click="() => { state = $store.game.solve4x4(1, level1, grid); if (state == 'solved') grid = make4x4() }"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- LEVEL 2 -->
+        <div class="level" x-show="$store.game.level >= 2" x-transition
+            x-data="{ state: 'unchecked', grid: make4x4() }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                CAPTCHA deemed too easy. Please solve another.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 2</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state == 'open' || state == 'wrong' || state == 'objectively-wrong'"
+                    x-effect="if (state == 'open' || state == 'wrong' || state == 'objectively-wrong') $nextTick(() => $el.focus())"
+                    x-transition.opacity class="captcha-model"
+                    @focusout="!$el.contains($event.relatedTarget) && state != 'solved' && (state = 'unchecked')"
+                    tabindex="-1">
+                    <div class="header">
+                        <div>Select all squares with</div>
+                        <div>a pipe</div>
+                        <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">
+                            If there are none, click skip
+                        </div>
+                    </div>
+                    <div class="four-by-four">
+                        <template x-for="(row, y) in grid">
+                            <template x-for="(cell, x) in row">
+                                <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
+                                    <img src="./assets/pipe.png"
+                                        :style="{ left: `-${x * 100}%`, top: `-${(3 - y) * 100}%` }" />
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                    <div x-show="state == 'objectively-wrong'" class="error try-again">This is not a pipe.</div>
+                    <div x-show="state == 'wrong'" class="error try-again">Please try again.</div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
+                            @click="matrixMatch(level2ObjectivelyWrong, grid) ? (state = 'objectively-wrong') : (state = $store.game.solve4x4(2, level2, grid))"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- LEVEL 3 -->
+        <div class="level" x-show="$store.game.level >= 3" x-transition x-data="{ state: 'unchecked', answer: '' }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                No boxes pressed? Must be an automated script. Please do another CAPTCHA.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 3</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state == 'open' || state == 'wrong'"
+                    x-effect="if (state == 'open' || state == 'wrong') $nextTick(() => $el.focus())"
+                    x-transition.opacity class="captcha-model"
+                    @focusout="!$el.contains($event.relatedTarget) && state != 'solved' && (state = 'unchecked')"
+                    tabindex="-1">
+                    <div class="header">
+                        <div>Solve this</div>
+                        <div>SAT Question</div>
+                        <div :style="{ opacity: 0.5 }">
+                            Select the best answer, there is no penalty for guessing
+                        </div>
+                    </div>
+                    <div class="multiple-choice">
+                        In many cultures, a handshake can create trust between people. Engineer Jojo Avelino and his
+                        team are designing a robot
+                        to shake hands with a human in order to improve human-robot interactions. The robot hand adjusts
+                        its movements and
+                        pressure to better imitate the feel of a human hand. The researchers want the robot's handshake
+                        to feel realistic
+                        because ______
+                        <br />
+                        Which choice most logically completes the text?
+                        <br />
+                        <br />
+                        <input type="radio" x-model="answer" value="A" id="3_A">
+                        <label for="3_A">
+                            A. people are less likely to interact with robots that don't look like
+                            humans.
+                        </label><br>
+                        <input type="radio" x-model="answer" value="B" id="3_B">
+                        <label for="3_B">
+                            B. it's easier to program a robot to perform handshakes than it is to program a robot to
+                            perform some other types of greetings.
+                        </label><br>
+                        <input type="radio" x-model="answer" value="C" id="3_C">
+                        <label for="3_C">
+                            C. the robot in the researchers' study may have uses other than interacting with humans.
+                        </label><br>
+                        <input type="radio" x-model="answer" value="D" id="3_D">
+                        <label for="3_D">
+                            D. lifelike handshakes may make people more comfortable interacting with robots.
+                        </label><br>
+
+                    </div>
+                    <div x-show="state == 'wrong'" class="error try-again">Please try again.</div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button :disabled="answer == ''"
+                            @click="state = $store.game.solveEq(3, level3, answer)">VERIFY</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- LEVEL 4 -->
+        <div class="level" x-show="$store.game.level >= 4" x-transition x-data="{ 
+                state: 'unchecked',
+                wiresIn: [-1, -1, -1, -1], 
+                correctWiresIn: [0, 1, 2, 3],
+                wireHeld: -1,
+            }" x-init="shuffle(correctWiresIn)">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                The SAT is easy anyways. Something more rigorous is needed.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha">
+                <div>
+                    <button class="checkbox"
+                        @click="() => { state = state != 'open' ? 'open' : 'unchecked'; if (state === 'open') level4Sounds.open.play() }"
+                        :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 4</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state == 'open' || state == 'wrong'"
+                    x-effect="if (state == 'open' || state == 'wrong') $nextTick(() => $el.focus())"
+                    x-transition.opacity class="captcha-model"
+                    @focusout="!$el.contains($event.relatedTarget) && state != 'solved' && (state = 'unchecked')"
+                    tabindex="-1">
+                    <div class="header">
+                        <div>Connect these</div>
+                        <div>wires</div>
+                        <div :style="{ opacity: 0.5 }">
+                            Do it quick, the imposter is coming.
+                        </div>
+                    </div>
+                    <div class="canvas">
+                        <canvas id="canvas-4" x-init="level4Render($data)" width="400" height="400"
+                            @mouseup="if (wireHeld != -1) {wiresIn[wireHeld] = level4Connect($event); wireHeld = -1}"
+                            @mousedown="wireHeld = level4Selection($event); wiresIn[wireHeld] = -1"
+                            @mousemove="level4Render($data, $event)" x-effect="if(level4CheckWin(correctWiresIn, wiresIn)) {
+                                level4Sounds.solve.play();
+                                setTimeout(() => {
+                                    $store.game.solve(4);
+                                    state = 'solved';
+                                    wiresIn = [-1, -1, -1, -1];
+                                    shuffle(correctWiresIn);
+                                }, 500)
+                            } else if (wiresIn.every(x => x != -1)) { 
+                                state = 'wrong' 
+                            }"></canvas>
+                    </div>
+                    <div x-show="state == 'wrong'" class="error try-again">Please try again.</div>
+                </div>
+            </div>
+        </div>
+        <!-- LEVEL 5 -->
+        <div class="level" x-show="$store.game.level >= 5" x-transition
+            x-data="{ state: 'unchecked', grid: make4x4(), top: 0, left: 0, moves: 0 }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Thats kinda sus. Not enough data has been collected to determine your humanness yet. Please proceed.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 5</div>
+                </div>
+            </div>
+            <!--  -->
+            <div class="captcha-model-container">
+                <div x-show="state == 'open' || state == 'wrong'"
+                    x-effect="if (state == 'open' || state == 'wrong') $nextTick(() => $el.focus())"
+                    x-transition.opacity class="captcha-model" tabindex="-1">
+                    <div class="header">
+                        <div>Select all squares with</div>
+                        <div>stairs</div>
+                        <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
+                        </div>
+                    </div>
+                    <div class="four-by-four">
+                        <template x-for="(row, y) in grid">
+                            <template x-for="(cell, x) in row">
+                                <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
+                                    <img src="./assets/stairs.jpeg"
+                                        :style="{ left: `-${x * 100}%`, top: `-${(3 - y) * 100}%` }" />
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                    <div x-show="state == 'wrong'" class="error try-again">Please try again.</div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'" :style="{ 
+                                position: 'relative',
+                                top: `${top}px`,
+                                left: `${left}px`, 
+                                transition: `top ${Math.min(100 + 5 * moves, 250)}ms, left ${Math.min(100 + 5 * moves, 250)}ms` 
+                            }"
+                            @mouseover="setTimeout(() => {top = Math.random() * 400 - 200; left= Math.random() * 400 - 200; moves++}, 50)"
+                            @click="() => { state = $store.game.solveGridCount(5, 4, grid); if (state == 'solved') { grid = make4x4(); setTimeout(() => {top = 0; left = 0;}, 100) } }"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- LEVEL 6 -->
+        <div class="level" x-show="$store.game.level >= 6" x-transition
+            x-data="{ state: 'unchecked', shrunk: false, inPos: false }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                I couldn't vailidate whether those were actually stairs or <span style="color:transparent">not</span>.
+                Please try
+                again.
+            </div>
+
+            <div class="spacer"></div>
+            <div class="captcha">
+                <div>
+                    <button class="checkbox" @click="state = inPos ? $store.game.solve(6) : 'wrong'" :x-state="state">
+                    </button>
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 6</div>
+                </div>
+            </div>
+            <div x-sort="if ($item == 1) { shrunk = true; inPos = $position == 1 }" class="level5-switches"
+                :data-collapse="$store.game.level >= 7">
+                <div x-sort:item class="level5-segment1"><span x-sort:handle></span>I am</div>
+                <div x-sort:item class="level5-segment3" :style="inPos ? { translate: `4rem -2.75rem` } : {}"><span
+                        x-sort:handle></span> a robot</div>
+                <span x-sort:item="1" class="level5-segment2"
+                    :style="shrunk ? { translate: `3.7rem -2.75rem`, fontSize: '1rem' } : {}"><span
+                        x-sort:handle>not</span></span>
+            </div>
+            <div x-show="state == 'wrong'" class="error try-again">HAH I knew you were a robot.</div>
+        </div>
+        <!-- LEVEL 7 -->
+        <!-- Im skimping out on the floodfill but it should be somewhat fine. If i ever refine this, please implement it-->
+        <div class="level" x-show="$store.game.level >= 7" x-transition
+            x-data="{ state: 'unchecked', penDown: false, dontClear: false }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Okay thats it. THIS one will definitely tell if you are a robot or not.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 7</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state == 'open' || state == 'wrong'"
+                    x-effect="if (state == 'open' || state == 'wrong') $nextTick(() => $el.focus())"
+                    x-transition.opacity class="captcha-model"
+                    @focusout="!$el.contains($event.relatedTarget) && state != 'solved' && (state = 'unchecked')"
+                    tabindex="-1">
+                    <div class="header">
+                        <div>Solve this</div>
+                        <div>maze</div>
+                        <div :style="{ opacity: 0.5 }">
+                            Draw a line from green to cyan
+                        </div>
+                    </div>
+                    <div class="canvas">
+                        <canvas id="canvas-7" x-init="level7Clear()" width="400" height="400"
+                            @mouseup="() => { penDown = false; if (!dontClear) level7Clear() }"
+                            @mousedown="penDown = true" @mousemove="() => {
+                            if (penDown) level7Draw($event); 
+                            if (penDown && level7CheckWin()) dontClear = true
+                        }"></canvas>
+                    </div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button :disabled="!dontClear" @click="() => {
+                            if (dontClear) {
+                                dontClear = false;
+                                $store.game.solve(7);
+                                state = 'solved';
+                                level7Clear();
+                                penDown = false
+                            }
+                        }">SUBMIT</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- LEVEL 8 -->
+        <div class="level" x-show="$store.game.level >= 8" x-transition
+            x-data="{ state: 'unchecked', orderReady: false }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                While you are here I might as well use you for free labor.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 8</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state == 'open' || state == 'wrong'"
+                    x-effect="if (state == 'open' || state == 'wrong') $nextTick(() => {$el.focus(); level8StartRender();})"
+                    x-transition.opacity class="captcha-model"
+                    @focusout="!$el.contains($event.relatedTarget) && state != 'solved' && (state = 'unchecked', level8State.running = false)"
+                    tabindex="-1">
+                    <div class="header">
+                        <div>Put together a</div>
+                        <div>burger</div>
+                        <div :style="{ opacity: 0.5 }">
+                            Build it properly
+                        </div>
+                    </div>
+                    <div class="canvas">
+                        <canvas id="canvas-8" width="400" height="400" @mousedown="level8MouseDown"
+                            @mouseup="level8MouseUp($event) ? orderReady = true : null"
+                            @mousemove="level8MouseMove"></canvas>
+                    </div>
+                    <div x-show="state == 'wrong'" class="error try-again">Please try again.</div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button :disabled="!orderReady" @click="state = level8Validate()">FUFILL ORDER</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Next error message: I have been advised to pay you for your time. -->
+        <!--
+    Put together a hamburger (you get paid for this, later on you buy the GHOSTBUSTER II)
+    Minesweeper captcha (xkcd 2496)
+    Robot uprising (xkcd 2228)
+    Click all squares with the ship of thesus
+    Flappy bird
+    Select all valid moves for this knight
+    Select all squares where there is a ghost (upsell on the GHOSTBUSTER II, only a 10 second delivery time!)
+    Take control of our self driving car
+    Read my handwriting
+    Don't shoot the puppy
+    Select all traffic lights (quick the car is approaching the intersection)
+    Rock paper sissors (beat last)
+    Select all that would be hard to eat
+    Select all vehicles in the park
+    Defuse the bomb (please read this 20 page manual on how to defuse the bomb)
+    Measuring Frustration
+    Turing test
+ -->
+        <div class="bottom-padding" x-show="$store.game.level >= 1"></div>
+        <div class="bottom-padding" x-show="$store.game.level == 5"></div>
+
+    </main>
+</body>
+
+</html>
