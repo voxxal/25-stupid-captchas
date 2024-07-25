@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+        rel="stylesheet">
+    <link href="ghostector.css" rel="stylesheet" />
+    <title>GHOSTECTOR II</title>
+    <script>
+        window.addEventListener("message", (e) => {
+            document.getElementById("status").innerText =
+                e.data === "alreadyBought" ?
+                    "You already bought a GHOSTECTOR!" :
+                    e.data === "success" ? "Thanks for buying the GHOSTECTOR!" : e.data === "tooPoor" ? "Too Poor!" : document.getElementById("status").innerText
+        });
+        const buy = () => {
+            window.opener.postMessage("attemptBuy");
+        }
+    </script>
+</head>
+
+<body>
+    <nav>
+        GHOSTBEATERS
+    </nav>
+    <main id="m">
+        <div><img src="assets/ghostector.svg"></div>
+        <div>
+            <h1>INTRODUCING THE GHOSTECTOR II.</h1>
+            <p>The GHOSTECTOR II is a revolutionary device that harnesses the latest advancements in spectral imaging
+                technology to
+                detect paranormal entities in digital photographs. No longer will you have to squint and strain your
+                eyes, wondering if
+                that peculiar blur or shadowy figure is just a trick of the light or something more otherworldly. With
+                the GHOSTECTOR
+                II, simply point the device at an image, and its state-of-the-art software will analyze every pixel,
+                searching for
+                anomalies that
+                could indicate spiritual presences.<br /><br />
+                Within seconds, any potential ghostly apparitions will appear, allowing you to scrutinize the
+                findings with confidence. The GHOSTECTOR II's intuitive interface provides in-depth analysis, including
+                the calculated
+                probability of the anomaly being paranormal based on a multitude of factors. Whether you're a ghost
+                enthusiast,
+                paranormal investigator, or simply someone looking to put your mind at ease, the GHOSTECTOR II offers an
+                unprecedented
+                level of insight into the great beyond.</p>
+            <button onclick="buy()">Buy now ($20.00)</button>
+            <div id="status"></div>
+        </div>
+        </div>
+</body>
+
+
+<script>
+    if (!window.opener) document.getElementById("m").innerText = "Please close this tab."
+</script>
+
+</html>
