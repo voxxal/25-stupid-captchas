@@ -177,7 +177,7 @@
             prevx = x;
             prevy = y;
             ctx.drawImage(mazeEmpty, 0, 0);
-            if (x >= 50 && x <= 350 && y >= 50 && y <= 350) valid = false;
+            if (x >= 50 && x <= 350 && y >= 50 && y <= 350) line.valid = false;
             line.end = [x, y];
         }
 
@@ -189,12 +189,9 @@
             if (line.valid && line.start[0] >= 185 && line.start[0] <= 199 && line.start[1] >= 32 && line.start[1] <= 46
                 && line.end[0] >= 201 && line.end[0] <= 215 && line.end[1] >= 352 && line.end[1] <= 366) {
                 // TODO don't wimp out on flood fill
+                // actually wasnt really nessasary
                 return true;
             }
-            // for (let y = 32; y <= 46; y++) {
-            //     for (let x = 185; x <= 199; x++) {
-            //     }
-            // }
             return false;
         }
 
@@ -309,6 +306,29 @@
                     ctx.fillRect(0, 0, 52, 4);
                 }
             },
+            onion: {
+                offset: [16, 13],
+                size: [32, 35],
+                drawIcon(ctx) {
+                    ctx.fillStyle = "#D76D33";
+                    ctx.beginPath();
+                    ctx.ellipse(16, 19, 16, 16, 0, 0, 2 * Math.PI);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.fill(new Path2D("M16 2C18 2 23 5 23 5H9C9 5 14 2 16 2Z"));
+                    ctx.fill(new Path2D("M16 2C16.5139 2 17.2258 2.19804 18 2.49235C17.5524 2.05159 17.2336 1.04683 17.1717 0.8411C17.1642 0.815895 17.1584 0.790883 17.1523 0.765295C17.0445 0.318053 16.6437 0 16.1802 0H15.8198C15.3563 0 14.9555 0.318054 14.8477 0.765295C14.8416 0.790883 14.8358 0.815896 14.8283 0.841101C14.7664 1.04683 14.4476 2.05159 14 2.49235C14.7742 2.19804 15.4861 2 16 2Z"));
+                    ctx.globalAlpha = 0.1;
+                    ctx.fillStyle = "#fff";
+                    for (const path of ["M16 35C16 35 18 24.9938 18 18.5C18 12.0062 16 2 16 2", "M21 35C21 35 26 25.5464 26 19C26 12.4536 21 3 21 3", "M18 35C18 35 22 25.251 22 18.5C22 11.749 18 2 18 2", "M23 35C23 35 30 25.5464 30 19C30 12.4536 23 3 23 3", "M16 35C16 35 14 24.9938 14 18.5C14 12.0062 16 2 16 2", "M11 35C11 35 6 25.5464 6 19C6 12.4536 11 3 11 3", "M14 35C14 35 10 25.251 10 18.5C10 11.749 14 2 14 2", "M9 35C9 35 2 25.5464 2 19C2 12.4536 9 3 9 3"])
+                        ctx.stroke(new Path2D(path));
+                    ctx.globalAlpha = 1;
+                },
+                stackSize: [52, 4],
+                drawStack(ctx) {
+                    ctx.fillStyle = "#fff"
+                    ctx.fillRect(0, 0, 52, 4);
+                }
+            },
             lettuce: {
                 offset: [6, 22],
                 size: [52, 20],
@@ -362,6 +382,15 @@
                 ctx.arc(100, 36 + 96, 64, 0, 2 * Math.PI);
                 ctx.closePath()
                 ctx.fill();
+                ctx.strokeStyle = "#555";
+                ctx.beginPath()
+                ctx.arc(100, 36 + 96, 48, 0, 2 * Math.PI);
+                ctx.closePath()
+                ctx.stroke();
+                ctx.beginPath()
+                ctx.arc(100, 36 + 96, 32, 0, 2 * Math.PI);
+                ctx.closePath()
+                ctx.stroke();
                 if (level8State.patties[0]) {
                     level8State.patties[0] -= dt;
                     if (level8State.patties[0] > 0) {
@@ -381,6 +410,15 @@
                 ctx.arc(100, 400 - 96, 64, 0, 2 * Math.PI);
                 ctx.closePath()
                 ctx.fill();
+                ctx.strokeStyle = "#555";
+                ctx.beginPath()
+                ctx.arc(100, 400 - 96, 48, 0, 2 * Math.PI);
+                ctx.closePath()
+                ctx.stroke();
+                ctx.beginPath()
+                ctx.arc(100, 400 - 96, 32, 0, 2 * Math.PI);
+                ctx.closePath()
+                ctx.stroke();
                 if (level8State.patties[1]) {
                     level8State.patties[1] -= dt;
                     if (level8State.patties[1] > 0) {
@@ -670,6 +708,8 @@
         ghosts[1].image.src = "./assets/ghosts/gang-ghost.png";
         ghosts[2].image.src = "./assets/ghosts/troll-ghost.png";
         ghosts[3].image.src = "./assets/ghosts/boss-ghost.png";
+        const crosshair = new Image();
+        crosshair.src = "./assets/ghostector-crosshair.svg";
         const ghostectorRender = (data) => {
             let lastTick = null;
             const canvas = document.getElementById("ghostector-canvas");
@@ -706,6 +746,13 @@
                     ctx.lineTo(196, 0);
                     ctx.stroke();
                 }
+
+                if (Alpine.store("game").upgrades[3].inPlace || Alpine.store("game").upgradesSlotted) {
+                    // { id: "ghostector-crosshair", anchor: [0 * 2, 31 * 2], size: [65 * 2, 33 * 2] },
+                    ctx.globalAlpha = 1;
+                    ctx.drawImage(crosshair, 0 * 2, 31 * 2, 65 * 2, 33 * 2);
+                }
+
                 lastTick = ts;
                 requestAnimationFrame(loop);
             }
@@ -925,7 +972,7 @@
         const updateUpgradePos = (game) => {
             for (const upgrade of game.upgrades) {
                 const pos = game.upgrades.find(({ id }) => id === upgrade.parent)?.pos ?? game.ghostectorPos;
-                if (upgrade.inPlace) upgrade.pos = [pos[0] + upgrade.anchor[0], pos[1] + upgrade.anchor[1]];
+                if (upgrade.inPlace || game.upgradesSlotted) upgrade.pos = [pos[0] + upgrade.anchor[0], pos[1] + upgrade.anchor[1]];
             }
         }
 
@@ -936,6 +983,11 @@
             correct: 70,
         };
         const gtScreenBgs = [new Image(), new Image(), new Image(), new Image()];
+        // Me no like factory image.
+        gtScreenBgs[0].src = "./assets/jigsaws/factory.png";
+        gtScreenBgs[1].src = "./assets/jigsaws/dev.png";
+        gtScreenBgs[2].src = "./assets/jigsaws/grass.png";
+        gtScreenBgs[3].src = "./assets/jigsaws/ghost.png";
         const gtScreenJigsaw = new Path2D("M29.6586 8C29.8797 7.37444 30 6.70127 30 6C30 2.68629 27.3137 0 24 0C20.6863 0 18 2.68629 18 6C18 6.70127 18.1203 7.37444 18.3414 8H9C8.44771 8 8 8.44771 8 9V18.3414C7.37444 18.1203 6.70127 18 6 18C2.68629 18 0 20.6863 0 24C0 27.3137 2.68629 30 6 30C6.70127 30 7.37444 29.8797 8 29.6586V39C8 39.5523 8.44771 40 9 40H18.3414C18.1203 40.6256 18 41.2987 18 42C18 45.3137 20.6863 48 24 48C27.3137 48 30 45.3137 30 42C30 41.2987 29.8797 40.6256 29.6586 40H39C39.5523 40 40 39.5523 40 39V31.0727C40 30.3825 39.3101 29.8971 38.6236 29.968C38.4186 29.9892 38.2106 30 38 30C34.6863 30 32 27.3137 32 24C32 20.6863 34.6863 18 38 18C38.2106 18 38.4186 18.0108 38.6236 18.032C39.3101 18.1029 40 17.6175 40 16.9273V9C40 8.44771 39.5523 8 39 8H29.6586Z")
 
         const gtScreenReset = () => {
@@ -948,8 +1000,8 @@
         const gtScreenNew = () => {
             gtScreenState.bg = Math.floor(Math.random() * gtScreenBgs.length);
             gtScreenState.pos = 2;
-            gtScreenState.correct = Math.floor(Math.random() * 80) + 30
-            gtScreenDraw()
+            gtScreenState.correct = Math.floor(Math.random() * 70) + 30
+            gtScreenDraw();
         }
 
         const gtScreenMouseDown = (e) => {
@@ -974,6 +1026,52 @@
             gtScreenState.dragged = false;
         }
 
+        const gtScreenDraw = () => {
+            const canvas = document.getElementById("ghostector-screen-canvas");
+            const ctx = canvas.getContext("2d");
+            const img = gtScreenBgs[gtScreenState.bg];
+            ctx.drawImage(img, 0, 0);
+            // ctx.fillRect(0, 0, canvas.width, 20);
+            ctx.save();
+
+
+            ctx.save();
+            ctx.fillStyle = "#555";
+            ctx.translate(gtScreenState.correct, 3);
+            ctx.scale(1 / 3, 1 / 3);
+            ctx.fill(gtScreenJigsaw);
+            ctx.restore();
+
+            ctx.save();
+            ctx.translate(gtScreenState.pos, 3);
+            ctx.scale(1 / 3, 1 / 3);
+
+            ctx.save();
+            ctx.shadowColor = "#000";
+            ctx.shadowBlur = 3;
+            ctx.fill(gtScreenJigsaw);
+            ctx.restore();
+
+            ctx.clip(gtScreenJigsaw);
+            ctx.scale(3, 3);
+            ctx.translate(-gtScreenState.correct, 0);
+            ctx.drawImage(img, 0, 0);
+            ctx.restore();
+
+            ctx.restore();
+        }
+
+        const gtScreenMouseMove = (e) => {
+            if (!Alpine.store('game').upgradesSlotted) return;
+            const rect = e.target.getBoundingClientRect();
+            if (gtScreenState.dragged) {
+                const x = e.clientX - rect.left;
+                gtScreenState.pos = x - 10;
+            }
+            gtScreenDraw();
+        }
+
+
         const fadeOut = () => {
             let opacity = 1;
             let lastTick = null;
@@ -985,7 +1083,10 @@
                 if (opacity <= 0) {
                     ghosts[3].size = [300, 400].map(x => x * (bossGhost.hp + 4) / 10);
                     ghosts[3].offset = [Math.floor(Math.random() * (window.innerWidth - 300)), Math.floor(Math.random() * (window.innerHeight - 400))];
-                    if (bossGhost.hp <= 0) return;
+                    if (bossGhost.hp <= 0) {
+                        ghosts[3].offset = [-999, -999];
+                        return;
+                    }
                     ghosts[3].opacity = 1;
                     return;
                 }
@@ -1000,39 +1101,6 @@
                 if (data.data[i * 4 + 3] === 255) return true;
             }
             return false;
-        }
-
-        const gtScreenDraw = () => {
-            const canvas = document.getElementById("ghostector-screen-canvas");
-            const ctx = canvas.getContext("2d");
-            ctx.fillStyle = "#fff";
-            ctx.fillRect(0, 0, canvas.width, 20);
-            ctx.save();
-            ctx.scale(1 / 3, 1 / 3);
-
-            ctx.save();
-            ctx.fillStyle = "#00000077";
-            ctx.translate(gtScreenState.correct * 3, 3 * 3);
-            ctx.fill(gtScreenJigsaw);
-            ctx.restore();
-
-            ctx.save();
-            ctx.fillStyle = "#f00";
-            ctx.translate(gtScreenState.pos * 3, 3 * 3);
-            ctx.fill(gtScreenJigsaw);
-            ctx.restore();
-
-            ctx.restore();
-        }
-
-        const gtScreenMouseMove = (e) => {
-            if (!Alpine.store('game').upgradesSlotted) return;
-            const rect = e.target.getBoundingClientRect();
-            if (gtScreenState.dragged) {
-                const x = e.clientX - rect.left;
-                gtScreenState.pos = x - 10;
-            }
-            gtScreenDraw()
         }
 
         const level22Text = `function getGhostRecords() {
@@ -1065,6 +1133,77 @@ function getThreats(ghosts) {
             game.bossSpawned = true;
         }
 
+        let level24Running = false;
+
+        const level24Start = (data) => {
+            if (level24Running) return;
+            let lastTick = 0;
+            const loop = (ts) => {
+                if (lastTick === 0) lastTick = ts;
+                const dt = (ts - lastTick) / 1000;
+                if (!level24Running) return;
+
+                const growth = data.frustrated ? 0.1 * dt : 0.05 * Math.pow(1 - Math.sqrt(data.progress), 2) * dt
+                data.progress = Math.min(1, data.progress + growth);
+                if (data.progress === 1) {
+                    setTimeout(() => {
+                        data.state = 'solved';
+                        Alpine.store('game').solve(24);
+                        data.progress = 0;
+                    }, 500);
+                    return;
+                }
+
+                lastTick = ts;
+                requestAnimationFrame(loop);
+            }
+            level24Running = true;
+            requestAnimationFrame(loop);
+        }
+        let level25Connected = false;
+        const WS_URL = "wss://stupid-captchas-server.fly.dev/"
+        const level25Connect = (data) => {
+            if (level25Connected) return;
+            data.ws = new WebSocket(WS_URL + data.room);
+            data.ws.onmessage = (e) => {
+                const msg = JSON.parse(e.data);
+                if (msg.type === "human") {
+                    Alpine.store('game').solve(25);
+                    data.human = true;
+                } else if (msg.type === "get") {
+                    data.msgs = msg.msgs;
+                    data.room = msg.room;
+                } else if (msg.type === "msg") {
+                    data.msgs = [...data.msgs, msg.msg];
+
+                    const msgs = document.getElementById('msgs');
+                    const scrollableDistance = msgs.scrollHeight - msgs.offsetHeight;
+                    data.autoscroll = msgs.scrollTop > scrollableDistance - 20;
+                }
+            }
+
+            data.ws.onclose = (e) => {
+                console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+                level25Connected = false;
+                setTimeout(() => {
+                    document.removeEventListener("keypress", handler);
+                    level25Connect();
+                }, 1000);
+            };
+
+            const handler = (e) => {
+                if (e.key === "Enter" && data.state === 'open') level25Send(data);
+            };
+
+            document.addEventListener("keypress", handler);
+            level25Connected = true;
+        }
+
+        const level25Send = (data) => {
+            if (!data.ws) return alert('failed to send message try again later :(');
+            data.ws.send(JSON.stringify({ type: "msg", msg: data.message }));
+            data.message = '';
+        }
 
         const isOverflown = ({ clientWidth, clientHeight, scrollWidth, scrollHeight }) => {
             return scrollHeight > clientHeight;
@@ -1104,13 +1243,13 @@ function getThreats(ghosts) {
                 ghostectorPos: Alpine.$persist([16, 16]),
                 upgradesShown: Alpine.$persist(false),
                 upgradesSlotted: Alpine.$persist(false),
-                upgrades: Alpine.$persist([
+                upgrades: [
                     { id: "ghostector-battery-slot", anchor: [90 * 2, 20 * 2], size: [22 * 2, 56 * 2] },
                     { id: "ghostector-battery", anchor: [10 * 2, 7 * 2], parent: "ghostector-battery-slot", size: [8 * 2, 42 * 2], z: 10000 },
                     { id: "ghostector-screen", anchor: [21 * 2, -11 * 2], size: [56 * 2, 17 * 2] },
                     { id: "ghostector-crosshair", anchor: [0 * 2, 31 * 2], size: [65 * 2, 33 * 2] },
-                ]),
-                bossSpawned: Alpine.$persist(false),
+                ],
+                bossSpawned: false,
 
                 startGame() {
                     if (this.started) return;
@@ -1266,11 +1405,9 @@ function getThreats(ghosts) {
                 We noticed some suspicious activity. Please complete this CAPTCHA to continue.
             </div>
             <div class="spacer"></div>
-            <div class="captcha" :data-solved="$store.game.level > 1" :data-solved="$store.game.level > 1">
+            <div class="captcha" :data-solved="$store.game.level > 1">
                 <div>
-                    <button class="checkbox"
-                        @click="state = state != 'open' ? 'open' : $store.game.level > 1 ? 'solved' : 'unchecked'"
-                        :x-state="state">
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
                     </button>
                     I'm not a robot
                 </div>
@@ -1319,7 +1456,7 @@ function getThreats(ghosts) {
                 CAPTCHA deemed too easy. Please solve another.
             </div>
             <div class="spacer"></div>
-            <div class="captcha" :data-solved="$store.game.level > 2" :data-solved="$store.game.level > 1">
+            <div class="captcha" :data-solved="$store.game.level > 2">
                 <div>
                     <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
                     </button>
@@ -1681,7 +1818,8 @@ function getThreats(ghosts) {
                         <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
                         <hr />
                         <div class="model-bottom-bar">
-                            <button @click="level8State.stack = []">CLEAR</button>
+                            <button @click="level8State.stack = []"
+                                :disabled="level8State.stack.length === 0">CLEAR</button>
 
                             <button :disabled="level8State.stack.length === 0" @click="() => {
                             state = level8Validate();
@@ -2334,7 +2472,7 @@ function getThreats(ghosts) {
                             d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
                             clip-rule="evenodd" />
                     </svg>
-                    This one is on me.
+                    Ok you know what this is getting boring, let's do some ghost busting.
                 </div>
                 <div class="spacer"></div>
                 <div class="captcha" :data-solved="$store.game.level > 21">
@@ -2396,7 +2534,7 @@ function getThreats(ghosts) {
                             <div>Hack into the</div>
                             <div>mainframe</div>
                             <div :style="{ opacity: 0.5 }">
-                                The Ghostbusters are calling.
+                                Beep boop beep boop.
                             </div>
                         </div>
                         <div class="canvas overlapped">
@@ -2414,15 +2552,14 @@ function getThreats(ghosts) {
                 </div>
             </div>
             <!-- LEVEL 23 -->
-            <div class="level" x-show="$store.game.level >= 23" x-transition
-                x-data="{ state: 'unchecked' }">
+            <div class="level" x-show="$store.game.level >= 23" x-transition x-data="{ state: 'unchecked' }">
                 <div class="error">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
                         <path fill-rule="evenodd"
                             d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
                             clip-rule="evenodd" />
                     </svg>
-                    TRHEAT DETECTED
+                    TRHEAT DETECTED (drag jigsaw to fire)
                 </div>
                 <div class="spacer"></div>
                 <div class="captcha" :data-solved="$store.game.level > 23">
@@ -2455,14 +2592,15 @@ function getThreats(ghosts) {
             </div>
             <!-- LEVEL 24 -->
             <div class="level" x-show="$store.game.level >= 24" x-transition
-                x-data="{ state: localStorage.frustrated ? ($store.game.solve(24), 'solved') : (localStorage.frustrated = true, 'unchecked') }">
+                x-data="{ state: 'unchecked', frustrated: (localStorage.frustrated ? true : (localStorage.frustrated = true, false)), progress: 0 }"
+                x-effect="if (state === 'open' || state === 'wrong') $nextTick(() => level24Start($data))">
                 <div class="error">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
                         <path fill-rule="evenodd"
                             d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
                             clip-rule="evenodd" />
                     </svg>
-                    Thanks for beating that ghost, unfortunately, i still need to confirm your humanness
+                    Humans get frustrated.
                 </div>
                 <div class="spacer"></div>
                 <div class="captcha" :data-solved="$store.game.level > 24">
@@ -2478,19 +2616,88 @@ function getThreats(ghosts) {
                 </div>
                 <div class="captcha-model-container">
                     <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked'">
+                        @click.outside="state = 'unchecked', level24Running = false">
                         <div class="header">
                             <div>Show</div>
                             <div>frustration</div>
-                            <div :style="{ opacity: 0.5 }">
-                                .
+                            <div :style="{ opacity: 0.5 }" x-text="`Progress: ${(progress * 100).toFixed(2)}%`">
+                                Progress - xx.xx%
                             </div>
                         </div>
-                        <div class="canvas">
-                            <canvas width="400" height="400"></canvas>
+                        <div class="single-input">
+                            <div class="bar">
+                                <div class="bar-fill" :style="{ width: `${progress * 100}%` }"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
+            <!-- LEVEL 25 -->
+            <div class="level" x-show="$store.game.level >= 25" x-transition
+                x-data="{ state: 'unchecked', message: '', msgs: [], ws: null, autoscroll: true, human: false, room: $persist('') }"
+                x-effect="state === 'open' ? level25Connect($data) : null">
+                <div class="error">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                        <path fill-rule="evenodd"
+                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Alright thats it.
+                </div>
+                <div class="spacer"></div>
+                <div class="captcha" :data-solved="$store.game.level > 25">
+                    <div>
+                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
+                            :x-state="state">
+                        </button>
+                        I'm not a robot
+                    </div>
+                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                        <div>CAPTCHA 25</div>
+                    </div>
+                </div>
+                <div class="captcha-model-container">
+                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                        @click.outside="state = 'unchecked'">
+                        <div class="header">
+                            <div>Convince me</div>
+                            <div>you are not a robot</div>
+                            <div :style="{ opacity: 0.5 }">Please wait for me to respond, a sound will play if the tab
+                                is open and a message is recieved. Any messages sent when the tab is closed will be
+                                saved. Come back any time.
+                            </div>
+                        </div>
+                        <div>
+                            <div class="msgs" id="msgs"
+                                x-effect="msgs; if (autoscroll) $nextTick(() => $el.scrollTo(0, $el.scrollHeight))">
+                                <div><b>aiden</b>: <span>convince me you are human</span></div>
+
+                                <template x-for="msg in msgs">
+                                    <div>
+                                        <b x-text="msg.admin ? 'aiden' : 'you'"></b>: <span x-text="msg.msg"></span>
+                                    </div>
+                                </template>
+                                <div x-show="human" :style="{ opacity: 0.5 }"><em>aiden has verified your humanness</em>
+                                </div>
+
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="model-bottom-bar">
+                            <input x-model="message" style="flex: 1;" placeholder="Message me">
+                            <button @click="level25Send($data)">SEND</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="win" x-show="$store.game.level >= 26" x-transition>
+                <h1>Congrats. You are not a robot.</h1>
+                <p>thanks for playing my stupid little game &lt;3</p>
+                <p>more games are coming in the future :)</p>
+                <br />
+                <br />
+                <p>love,</p>
+                <a href="https://voxal.dev"><img src="assets/aiden-shi.png"></a>
             </div>
 
 
@@ -2508,12 +2715,11 @@ function getThreats(ghosts) {
     -something stupid about code compiling
 
     THINGS TO RESOLVE:
-    - flood fill
-    - add onions and pickles to burger level
+    - flood fill // no.
     - add boss defeated screen to 23
     - actually use images for the ghostector canvas
 -->
-            <div class="bottom-padding" x-show="$store.game.level >= 1"></div>
+            <div class="bottom-padding" x-show="$store.game.level >= 1 && $store.game.level <= 25"></div>
             <div class="bottom-padding" x-show="$store.game.level === 5 || $store.game.level === 23"></div>
 
     </main>

@@ -440,3 +440,29 @@ input {
   margin: auto;
   font-size: 2rem;
 }
+
+.bar {
+  border: 1px solid rgb(204, 204, 204);
+  height: 2rem;
+}
+
+.bar-fill {
+  background-color: #1972e7;
+  height: 100%;
+}
+
+.msgs {
+  height: 400px;
+  overflow-y: scroll;
+  margin-left: 2px;
+  text-wrap: wrap;
+  width: 400px;
+  overflow-wrap: break-word;
+  align-items: flex-end;
+}
+
+.win {
+  width: 200%;
+  translate: -25% 0;
+  text-align: center;
+}
