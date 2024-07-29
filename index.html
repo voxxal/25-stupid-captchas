@@ -1237,9 +1237,9 @@ function getThreats(ghosts) {
             Alpine.store('game', {
                 started: Alpine.$persist(false),
                 startedDots: 0,
-                level: Alpine.$persist(24),
+                level: Alpine.$persist(0),
                 money: Alpine.$persist(0),
-                boughtGhostector: Alpine.$persist(true),
+                boughtGhostector: Alpine.$persist(false),
                 ghostectorPos: Alpine.$persist([16, 16]),
                 upgradesShown: Alpine.$persist(false),
                 upgradesSlotted: Alpine.$persist(false),
