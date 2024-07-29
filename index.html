@@ -997,7 +997,7 @@
 
         const gtScreenState = {
             bg: null,
-            pos: 2,
+            pos: 4,
             dragged: false,
             correct: 70,
         };
@@ -1018,7 +1018,7 @@
 
         const gtScreenNew = () => {
             gtScreenState.bg = Math.floor(Math.random() * gtScreenBgs.length);
-            gtScreenState.pos = 2;
+            gtScreenState.pos = 4;
             gtScreenState.correct = Math.floor(Math.random() * 70) + 30
             gtScreenDraw();
         }
@@ -1052,6 +1052,8 @@
             ctx.drawImage(img, 0, 0);
             // ctx.fillRect(0, 0, canvas.width, 20);
             ctx.save();
+            ctx.fillStyle = "#fff"
+            ctx.fillRect(0, 0, 20, 20);
 
 
             ctx.save();
@@ -1094,6 +1096,7 @@
         const fadeOut = () => {
             let opacity = 1;
             let lastTick = null;
+            let req = null;
             const loop = (ts) => {
                 if (!lastTick) lastTick = ts;
                 const dt = (ts - lastTick) / 1000;
@@ -1104,15 +1107,16 @@
                     ghosts[3].offset = [Math.floor(Math.random() * (window.innerWidth - 300)), Math.floor(Math.random() * (window.innerHeight - 400))];
                     if (bossGhost.hp <= 0) {
                         ghosts[3].offset = [-999, -999];
+                        cancelAnimationFrame(req);
                         return;
                     }
                     ghosts[3].opacity = 1;
                     return;
                 }
                 lastTick = ts;
-                requestAnimationFrame(loop);
+                req = requestAnimationFrame(loop);
             }
-            requestAnimationFrame(loop);
+            req = requestAnimationFrame(loop);
         }
         const clickedOnGhost = () => {
             const data = document.getElementById("ghostector-canvas").getContext("2d").getImageData(192 / 2, 192 / 2, 2, 2);
@@ -2574,7 +2578,7 @@ function getThreats(ghosts) {
             <div class="captcha-model-container">
                 <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
                     @click.outside="$event.target.tagName !== 'IMG' && (state = 'unchecked')"
-                    x-effect="bossGhost.hp <= 0 && (state === 'solved', $store.game.solve(23), $store.game.bossSpawned = false, bossGhost.hp = 6, ghosts[3].size = [300, 400])">
+                    x-effect="bossGhost.hp <= 0 && (state === 'solved', $store.game.solve(23), $store.game.bossSpawned = false, bossGhost.hp = 6, ghosts[3].size = [300, 400], ghosts[3].offset = [-999, -999])">
                     <div class="header">
                         <div>Defeat the</div>
                         <div>ghost</div>
@@ -2590,7 +2594,7 @@ function getThreats(ghosts) {
         </div>
         <!-- LEVEL 24 -->
         <div class="level" x-show="$store.game.level >= 24" x-transition
-            x-data="{ state: 'unchecked', frustrated: false, progress: 0 }"
+            x-data="{ state: 'unchecked', frustrated: false, progress: 0, opened: false }"
             x-effect="if (state === 'open' || state === 'wrong') $nextTick(() => level24Start($data))">
             <div class="error">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
@@ -2604,7 +2608,7 @@ function getThreats(ghosts) {
             <div class="captcha" :data-solved="$store.game.level > 24">
                 <div>
                     <button class="checkbox"
-                        @click="state = state != 'open' ? 'open' : 'unchecked'; frustrated = (localStorage.frustrated ? true : (localStorage.frustrated = true, false))"
+                        @click="state = state != 'open' ? 'open' : 'unchecked'; if (!opened) { frustrated = (localStorage.frustrated ? true : (localStorage.frustrated = true, false)); opened = true }"
                         :x-state="state">
                     </button>
                     I'm not a robot
@@ -2703,7 +2707,6 @@ function getThreats(ghosts) {
     THINGS TO RESOLVE:
     - flood fill // no.
     - add boss defeated screen to 23
-    - still fix boss not disappearing
 -->
         <div class="bottom-padding" x-show="$store.game.level >= 1 && $store.game.level <= 25"></div>
         <div class="bottom-padding" x-show="$store.game.level === 5 || $store.game.level === 23"></div>
