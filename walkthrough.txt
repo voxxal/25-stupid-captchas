@@ -186,6 +186,14 @@ screen. hit it 6 times to win.
 # Level 24
 frustrated people reload the page.
 
+# Level 25
+bonus points if you convince me i am a robot
+
 [1] https://en.wikipedia.org/wiki/The_Treachery_of_Images
 [2] https://www.nytimes.com/games/connections
 [3] https://en.wikipedia.org/wiki/Ship_of_Theseus
+
+thanks for playing my silly little game.
+- AS
+
+email: voxal@duck.com

@@ -1393,6 +1393,8 @@ function getThreats(ghosts) {
         <div id="boss-ghost-anchor"></div>
         <div class="top-padding"></div>
         <div x-text="'$' + $store.game.money.toFixed(2)" x-show="$store.game.money" class="money-counter"></div>
+        <div class="walkthrough"><a href="./walkthrough.txt" target="_blank">Walkthrough</a></div>
+
         <div x-show="$store.game.boughtGhostector" class="ghostector" x-data="{
             ghostectorHeld: null,
             gtMouseDown(e) {

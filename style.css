@@ -314,6 +314,12 @@ input {
   left: 1rem;
 }
 
+.walkthrough {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+}
+
 .level9-cell {
   display: grid;
   align-items: center;
