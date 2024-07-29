@@ -2592,7 +2592,7 @@ function getThreats(ghosts) {
             </div>
             <!-- LEVEL 24 -->
             <div class="level" x-show="$store.game.level >= 24" x-transition
-                x-data="{ state: 'unchecked', frustrated: (localStorage.frustrated ? true : (localStorage.frustrated = true, false)), progress: 0 }"
+                x-data="{ state: 'unchecked', frustrated: false, progress: 0 }"
                 x-effect="if (state === 'open' || state === 'wrong') $nextTick(() => level24Start($data))">
                 <div class="error">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
@@ -2605,7 +2605,7 @@ function getThreats(ghosts) {
                 <div class="spacer"></div>
                 <div class="captcha" :data-solved="$store.game.level > 24">
                     <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
+                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'; frustrated = (localStorage.frustrated ? true : (localStorage.frustrated = true, false))"
                             :x-state="state">
                         </button>
                         I'm not a robot
