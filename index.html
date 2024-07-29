@@ -977,7 +977,7 @@
 
         const spawnUpgrades = () => {
             const game = Alpine.store("game");
-            if (game.upgradesShown) return;
+            if (game.upgradesShown || game.upgradesSlotted) return;
             let { top, left } = document.getElementById("upgrade-spawn").getBoundingClientRect();
             left += 100;
             game.upgrades[0].pos = [left + 40, top];
@@ -1107,6 +1107,10 @@
                     ghosts[3].offset = [Math.floor(Math.random() * (window.innerWidth - 300)), Math.floor(Math.random() * (window.innerHeight - 400))];
                     if (bossGhost.hp <= 0) {
                         ghosts[3].offset = [-999, -999];
+                        bossGhost.hp = 6;
+                        ghosts[3].size = [300, 400];
+                        ghosts[3].offset = [-999, -999], 
+                        playDefeatAnimation();
                         cancelAnimationFrame(req);
                         return;
                     }
@@ -1124,6 +1128,18 @@
                 if (data.data[i * 4 + 3] === 255) return true;
             }
             return false;
+        }
+
+        const playDefeatAnimation = () => {
+            document.getElementById("victory-message").style.display = "grid";
+            document.getElementById("victory-message").classList.add("victory-message-animation");
+            document.getElementById("echo").classList.add("echo-animation");
+
+            setTimeout(() => {
+                document.getElementById("victory-message").classList.remove("victory-message-animation");
+                document.getElementById("echo").classList.remove("echo-animation");
+                document.getElementById("victory-message").style.display = "none";
+            }, 5500);
         }
 
         const level22Text = `function getGhostRecords() {
@@ -1184,6 +1200,7 @@ function getThreats(ghosts) {
             requestAnimationFrame(loop);
         }
         let level25Connected = false;
+        const youveGotMail = new Audio("./assets/youve-got-mail-sound.mp3");
         const WS_URL = "wss://stupid-captchas-server.fly.dev/"
         const level25Connect = (data) => {
             if (level25Connected) return;
@@ -1202,6 +1219,10 @@ function getThreats(ghosts) {
                     const msgs = document.getElementById('msgs');
                     const scrollableDistance = msgs.scrollHeight - msgs.offsetHeight;
                     data.autoscroll = msgs.scrollTop > scrollableDistance - 20;
+
+                    if (!document.hasFocus()) {
+                        youveGotMail.play();
+                    }
                 }
             }
 
@@ -1264,7 +1285,7 @@ function getThreats(ghosts) {
                 money: Alpine.$persist(0),
                 boughtGhostector: Alpine.$persist(false),
                 ghostectorPos: Alpine.$persist([16, 16]),
-                upgradesShown: Alpine.$persist(false),
+                upgradesShown: false,
                 upgradesSlotted: Alpine.$persist(false),
                 upgrades: [
                     { id: "ghostector-battery-slot", anchor: [90 * 2, 20 * 2], size: [22 * 2, 56 * 2] },
@@ -1322,15 +1343,15 @@ function getThreats(ghosts) {
             })
             Alpine.bind("ghostectorUpgrade", () => ({
                 class: 'ghostector-upgrade',
-                "x-show"() { return this.$store.game.upgradesShown },
+                "x-show"() { return this.$store.game.upgradesShown || this.$store.game.upgradesSlotted },
                 "x-init"() {
                     const upgrade = this.$store.game.upgrades[this.i];
                     upgrade.held = null;
                     upgrade.pos = [0, 0];
                     upgrade.inPlace = false;
                     const handler = (e) => {
-                        if (!this.$store.game.upgradesShown) return;
-                        if (this.$store.game.upgrades.every(u => u.inPlace && !u.held)) {
+                        if (!(this.$store.game.upgradesShown || this.$store.game.upgradesSlotted)) return;
+                        if (this.$store.game.upgrades.every(u => u.inPlace && !u.held) || this.$store.game.upgradesSlotted) {
                             Alpine.store('game').upgradesSlotted = true;
                             document.removeEventListener('mousemove', handler);
                         }
@@ -2578,7 +2599,7 @@ function getThreats(ghosts) {
             <div class="captcha-model-container">
                 <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
                     @click.outside="$event.target.tagName !== 'IMG' && (state = 'unchecked')"
-                    x-effect="bossGhost.hp <= 0 && (state === 'solved', $store.game.solve(23), $store.game.bossSpawned = false, bossGhost.hp = 6, ghosts[3].size = [300, 400], ghosts[3].offset = [-999, -999])">
+                    x-effect="bossGhost.hp <= 0 && (state === 'solved', $store.game.solve(23), $store.game.bossSpawned = false)">
                     <div class="header">
                         <div>Defeat the</div>
                         <div>ghost</div>
@@ -2592,6 +2613,13 @@ function getThreats(ghosts) {
                 </div>
             </div>
         </div>
+        <div class="victory-message" id="victory-message">
+            <div class="dark-souls-bar">
+                <div class="text">VICTORY ACHIEVED</div>
+                <div class="echo" id="echo">VICTORY ACHIEVED</div>
+            </div>
+        </div>
+
         <!-- LEVEL 24 -->
         <div class="level" x-show="$store.game.level >= 24" x-transition
             x-data="{ state: 'unchecked', frustrated: false, progress: 0, opened: false }"
@@ -2664,9 +2692,11 @@ function getThreats(ghosts) {
                     <div class="header">
                         <div>Convince me</div>
                         <div>you are not a robot</div>
-                        <div :style="{ opacity: 0.5 }">Please wait for me to respond, a sound will play if the tab
-                            is open and a message is recieved. Any messages sent when the tab is closed will be
-                            saved. Come back any time.
+                        <div :style="{ opacity: 0.5 }">Please wait for me to respond, a
+                            <span style="text-decoration: underline; cursor: pointer;"
+                                @click="youveGotMail.play()">sound</span> will
+                            play if the tab is open and a message is recieved. Any messages sent when the tab is closed
+                            will be saved. Come back any time.
                         </div>
                     </div>
                     <div>
@@ -2698,16 +2728,10 @@ function getThreats(ghosts) {
             <p>more games are coming in the future :)</p>
             <br />
             <br />
-            <p>love,</p>
+            <p>with love,</p>
             <a href="https://voxal.dev"><img src="assets/aiden-shi.png"></a>
         </div>
 
-
-        <!--
-    THINGS TO RESOLVE:
-    - flood fill // no.
-    - add boss defeated screen to 23
--->
         <div class="bottom-padding" x-show="$store.game.level >= 1 && $store.game.level <= 25"></div>
         <div class="bottom-padding" x-show="$store.game.level === 5 || $store.game.level === 23"></div>
 
