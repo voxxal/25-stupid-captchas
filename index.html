@@ -21,8 +21,7 @@
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://voxal.dev/25-stupid-captchas/" />
     <meta property="twitter:title" content="25 stupid captchas" />
-    <meta property="twitter:description"
-        content="a silly game by aiden shi" />
+    <meta property="twitter:description" content="a silly game by aiden shi" />
     <meta property="twitter:image" content="https://voxal.dev/25-stupid-captchas/assets/banner-large.png" />
 
     <link href="style.css" rel="stylesheet" />
@@ -1615,22 +1614,22 @@ function getThreats(ghosts) {
                 <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
                     <div>CAPTCHA 4</div>
                 </div>
-                </>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked'">
-                        <div class="header">
-                            <div>Connect these</div>
-                            <div>wires</div>
-                            <div :style="{ opacity: 0.5 }">
-                                Do it quick, the imposter is coming.
-                            </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked'">
+                    <div class="header">
+                        <div>Connect these</div>
+                        <div>wires</div>
+                        <div :style="{ opacity: 0.5 }">
+                            Do it quick, the imposter is coming.
                         </div>
-                        <div class="canvas">
-                            <canvas id="canvas-4" x-init="level4Render($data)" width="400" height="400"
-                                @mouseup="if (wireHeld != -1) {wiresIn[wireHeld] = level4Connect($event); wireHeld = -1}"
-                                @mousedown="wireHeld = level4Selection($event); wiresIn[wireHeld] = -1"
-                                @mousemove="level4Render($data, $event)" x-effect="if(level4CheckWin(correctWiresIn, wiresIn)) {
+                    </div>
+                    <div class="canvas">
+                        <canvas id="canvas-4" x-init="level4Render($data)" width="400" height="400"
+                            @mouseup="if (wireHeld != -1) {wiresIn[wireHeld] = level4Connect($event); wireHeld = -1}"
+                            @mousedown="wireHeld = level4Selection($event); wiresIn[wireHeld] = -1"
+                            @mousemove="level4Render($data, $event)" x-effect="if(level4CheckWin(correctWiresIn, wiresIn)) {
                                 level4Sounds.solve.play();
                                 setTimeout(() => {
                                     $store.game.solve(4);
@@ -1641,149 +1640,145 @@ function getThreats(ghosts) {
                             } else if (wiresIn.every(x => x != -1)) {
                                 state = 'wrong'
                             }"></canvas>
-                        </div>
-                        <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
                     </div>
+                    <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
                 </div>
             </div>
-            <!-- LEVEL 5 -->
-            <div class="level" x-show="$store.game.level >= 5" x-transition
-                x-data="{ state: 'unchecked', grid: make4x4(), top: 0, left: 0, moves: 0 }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    Thats kinda sus. Not enough data has been collected to determine your humanness yet. Please proceed.
+        </div>
+        <!-- LEVEL 5 -->
+        <div class="level" x-show="$store.game.level >= 5" x-transition
+            x-data="{ state: 'unchecked', grid: make4x4(), top: 0, left: 0, moves: 0 }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Thats kinda sus. Not enough data has been collected to determine your humanness yet. Please proceed.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 5">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
                 </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 5">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 5</div>
-                    </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 5</div>
                 </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model">
-                        <div class="header">
-                            <div>Select all squares with</div>
-                            <div>stairs</div>
-                            <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
-                            </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model">
+                    <div class="header">
+                        <div>Select all squares with</div>
+                        <div>stairs</div>
+                        <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
                         </div>
-                        <div class="four-by-four">
-                            <template x-for="(row, y) in grid">
-                                <template x-for="(cell, x) in row">
-                                    <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
-                                        <img src="./assets/stairs.jpeg"
-                                            :style="{ left: `-${x * 100}%`, top: `-${(3 - y) * 100}%` }" />
-                                    </div>
-                                </template>
+                    </div>
+                    <div class="four-by-four">
+                        <template x-for="(row, y) in grid">
+                            <template x-for="(cell, x) in row">
+                                <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
+                                    <img src="./assets/stairs.jpeg"
+                                        :style="{ left: `-${x * 100}%`, top: `-${(3 - y) * 100}%` }" />
+                                </div>
                             </template>
-                        </div>
-                        <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
-                        <hr />
-                        <div class="model-bottom-bar">
-                            <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'" :style="{
+                        </template>
+                    </div>
+                    <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'" :style="{
                                 position: 'relative',
                                 top: `${top}px`,
                                 left: `${left}px`,
                                 transition: `top ${Math.min(100 + 5 * moves, 250)}ms, left ${Math.min(100 + 5 * moves, 250)}ms`
                             }" id="jumpy-button"
-                                @mouseover="setTimeout(() => {top = Math.random() * 400 - 200; left= Math.random() * 400 - 200; moves++}, 50)"
-                                @click="() => { state = $store.game.solveGridCount(5, 4, grid); if (state === 'solved') { grid = make4x4(); setTimeout(() => {top = 0; left = 0;}, 100) } }"></button>
-                        </div>
+                            @mouseover="setTimeout(() => {top = Math.random() * 400 - 200; left= Math.random() * 400 - 200; moves++}, 50)"
+                            @click="() => { state = $store.game.solveGridCount(5, 4, grid); if (state === 'solved') { grid = make4x4(); setTimeout(() => {top = 0; left = 0;}, 100) } }"></button>
                     </div>
                 </div>
             </div>
-            <!-- LEVEL 6 -->
-            <div class="level" x-show="$store.game.level >= 6" x-transition
-                x-data="{ state: 'unchecked', shrunk: false, inPos: false }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    I couldn't vailidate whether those were actually stairs or <span
-                        style="color:transparent">not</span>.
-                    Please try
-                    again.
-                </div>
+        </div>
+        <!-- LEVEL 6 -->
+        <div class="level" x-show="$store.game.level >= 6" x-transition
+            x-data="{ state: 'unchecked', shrunk: false, inPos: false }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                I couldn't vailidate whether those were actually stairs or <span style="color:transparent">not</span>.
+                Please try
+                again.
+            </div>
 
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 6">
-                    <div>
-                        <button class="checkbox" @click="state = inPos ? $store.game.solve(6) : 'wrong'"
-                            :x-state="state">
-                        </button>
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 6</div>
-                    </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 6">
+                <div>
+                    <button class="checkbox" @click="state = inPos ? $store.game.solve(6) : 'wrong'" :x-state="state">
+                    </button>
                 </div>
-                <div x-sort="if ($item === 1) { shrunk = true; inPos = $position === 1 }" class="level5-switches"
-                    :data-collapse="$store.game.level >= 7">
-                    <div x-sort:item class="level5-segment1"><span x-sort:handle></span>I am</div>
-                    <div x-sort:item class="level5-segment3" :style="inPos ? { translate: `4rem -2.75rem` } : {}"><span
-                            x-sort:handle></span> a robot</div>
-                    <span x-sort:item="1" class="level5-segment2"
-                        :style="shrunk ? { translate: `3.7rem -2.75rem`, fontSize: '1rem' } : {}"><span
-                            x-sort:handle>not</span></span>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 6</div>
                 </div>
-                <div x-show="state === 'wrong'" class="error try-again">HAH I knew you were a robot.</div>
             </div>
-            <!-- LEVEL 7 -->
-            <!-- Im skimping out on the floodfill but it should be somewhat fine. If i ever refine this, please implement it-->
-            <div class="level" x-show="$store.game.level >= 7" x-transition
-                x-data="{ state: 'unchecked', penDown: false, dontClear: false }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    Okay thats it. THIS one will definitely tell if you are a robot or not.
+            <div x-sort="if ($item === 1) { shrunk = true; inPos = $position === 1 }" class="level5-switches"
+                :data-collapse="$store.game.level >= 7">
+                <div x-sort:item class="level5-segment1"><span x-sort:handle></span>I am</div>
+                <div x-sort:item class="level5-segment3" :style="inPos ? { translate: `4rem -2.75rem` } : {}"><span
+                        x-sort:handle></span> a robot</div>
+                <span x-sort:item="1" class="level5-segment2"
+                    :style="shrunk ? { translate: `3.7rem -2.75rem`, fontSize: '1rem' } : {}"><span
+                        x-sort:handle>not</span></span>
+            </div>
+            <div x-show="state === 'wrong'" class="error try-again">HAH I knew you were a robot.</div>
+        </div>
+        <!-- LEVEL 7 -->
+        <!-- Im skimping out on the floodfill but it should be somewhat fine. If i ever refine this, please implement it-->
+        <div class="level" x-show="$store.game.level >= 7" x-transition
+            x-data="{ state: 'unchecked', penDown: false, dontClear: false }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Okay thats it. THIS one will definitely tell if you are a robot or not.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 7">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
                 </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 7">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 7</div>
-                    </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 7</div>
                 </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked'">
-                        <div class="header">
-                            <div>Solve this</div>
-                            <div>maze</div>
-                            <div :style="{ opacity: 0.5 }">
-                                Draw a line from green to cyan
-                            </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked'">
+                    <div class="header">
+                        <div>Solve this</div>
+                        <div>maze</div>
+                        <div :style="{ opacity: 0.5 }">
+                            Draw a line from green to cyan
                         </div>
-                        <div class="canvas">
-                            <canvas id="canvas-7" x-init="level7Clear()" width="400" height="400"
-                                @mouseup="() => { penDown = false; if (!dontClear) level7Clear() }"
-                                @mousedown="penDown = true" @mousemove="() => {
+                    </div>
+                    <div class="canvas">
+                        <canvas id="canvas-7" x-init="level7Clear()" width="400" height="400"
+                            @mouseup="() => { penDown = false; if (!dontClear) level7Clear() }"
+                            @mousedown="penDown = true" @mousemove="() => {
                             if (penDown) level7Draw($event);
                             if (penDown && level7CheckWin()) dontClear = true
                         }"></canvas>
-                        </div>
-                        <hr />
-                        <div class="model-bottom-bar">
-                            <button :disabled="!dontClear" @click="() => {
+                    </div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button :disabled="!dontClear" @click="() => {
                             if (dontClear) {
                                 dontClear = false;
                                 $store.game.solve(7);
@@ -1792,417 +1787,408 @@ function getThreats(ghosts) {
                                 penDown = false
                             }
                         }">SUBMIT</button>
-                        </div>
                     </div>
                 </div>
             </div>
-            <!-- LEVEL 8 -->
-            <div class="level" x-show="$store.game.level >= 8" x-transition
-                x-data="{ state: 'unchecked', orderReady: false }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    While you are here I might as well use you for free labor.
+        </div>
+        <!-- LEVEL 8 -->
+        <div class="level" x-show="$store.game.level >= 8" x-transition
+            x-data="{ state: 'unchecked', orderReady: false }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                While you are here I might as well use you for free labor.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 8">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
                 </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 8">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 8</div>
-                    </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 8</div>
                 </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'"
-                        x-effect="if (state === 'open' || state === 'wrong') $nextTick(() => level8StartRender())"
-                        x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked', level8State.running = false">
-                        <div class="header">
-                            <div>Put together a</div>
-                            <div>burger</div>
-                            <div :style="{ opacity: 0.5 }">
-                                Make it right OK?
-                            </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'"
+                    x-effect="if (state === 'open' || state === 'wrong') $nextTick(() => level8StartRender())"
+                    x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked', level8State.running = false">
+                    <div class="header">
+                        <div>Put together a</div>
+                        <div>burger</div>
+                        <div :style="{ opacity: 0.5 }">
+                            Make it right OK?
                         </div>
-                        <div class="canvas">
-                            <canvas id="canvas-8" width="400" height="400" @mousedown="level8MouseDown"
-                                @mouseup="level8MouseUp" @mousemove="level8MouseMove"></canvas>
-                        </div>
-                        <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
-                        <hr />
-                        <div class="model-bottom-bar">
-                            <button @click="level8State.stack = []"
-                                :disabled="level8State.stack.length === 0">CLEAR</button>
+                    </div>
+                    <div class="canvas">
+                        <canvas id="canvas-8" width="400" height="400" @mousedown="level8MouseDown"
+                            @mouseup="level8MouseUp" @mousemove="level8MouseMove"></canvas>
+                    </div>
+                    <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button @click="level8State.stack = []"
+                            :disabled="level8State.stack.length === 0">CLEAR</button>
 
-                            <button :disabled="level8State.stack.length === 0" @click="() => {
+                        <button :disabled="level8State.stack.length === 0" @click="() => {
                             state = level8Validate();
                             if (state === 'solved') {
                                 $store.game.solve(8);
                                 $store.game.money += 5;
                             }
                         }">FUFILL ORDER</button>
-                        </div>
                     </div>
                 </div>
             </div>
-            <!-- LEVEL 9 -->
-            <div class="level" x-show="$store.game.level >= 9" x-transition
-                x-data="{ state: 'unchecked', grid: make4x4() }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    I have been advised to pay you for your time.
+        </div>
+        <!-- LEVEL 9 -->
+        <div class="level" x-show="$store.game.level >= 9" x-transition
+            x-data="{ state: 'unchecked', grid: make4x4() }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                I have been advised to pay you for your time.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 9">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
                 </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 9">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 9</div>
-                    </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 9</div>
                 </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked'">
-                        <div class="header">
-                            <div>Select all squares with</div>
-                            <div>mines</div>
-                            <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
-                            </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked'">
+                    <div class="header">
+                        <div>Select all squares with</div>
+                        <div>mines</div>
+                        <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
                         </div>
-                        <div class="four-by-four">
-                            <template x-for="(row, y) in grid">
-                                <template x-for="(cell, x) in row">
-                                    <div class="cell level9-cell" @click="row[x] = !row[x]" :class="cell && 'pressed'"
-                                        x-text="level9Cells[y][x] ? level9Cells[y][x] : ''" :style="{
+                    </div>
+                    <div class="four-by-four">
+                        <template x-for="(row, y) in grid">
+                            <template x-for="(cell, x) in row">
+                                <div class="cell level9-cell" @click="row[x] = !row[x]" :class="cell && 'pressed'"
+                                    x-text="level9Cells[y][x] ? level9Cells[y][x] : ''" :style="{
                                         color: ['','#536ad1','#3e843e','#c84848'][level9Cells[y][x]],
                                         background: level9Cells[y][x] ? '#e0e0e0' :'#c0c0c0'
                                     }">
-                                    </div>
-                                </template>
+                                </div>
                             </template>
-                        </div>
-                        <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
+                        </template>
+                    </div>
+                    <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
 
-                        <hr />
-                        <div class="model-bottom-bar">
-                            <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
-                                @click="() => { state = $store.game.solveMat(9, level9, grid); if (state === 'solved') grid = make4x4() }"></button>
-                        </div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
+                            @click="() => { state = $store.game.solveMat(9, level9, grid); if (state === 'solved') grid = make4x4() }"></button>
                     </div>
                 </div>
             </div>
-            <!-- LEVEL 10 -->
-            <div class="level" x-show="$store.game.level >= 10" x-transition
-                x-data="{ state: 'unchecked', grid: make4x4() }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    I hope you like word games.
+        </div>
+        <!-- LEVEL 10 -->
+        <div class="level" x-show="$store.game.level >= 10" x-transition
+            x-data="{ state: 'unchecked', grid: make4x4() }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                I hope you like word games.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 10">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
                 </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 10">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 10</div>
-                    </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 10</div>
                 </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked'">
-                        <div class="header">
-                            <div>Select all squares corresponding with the</div>
-                            <div>purple category</div>
-                            <div :style="{ opacity:  0.5 }">Check New York Times Connections for more info.
-                            </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked'">
+                    <div class="header">
+                        <div>Select all squares corresponding with the</div>
+                        <div>purple category</div>
+                        <div :style="{ opacity:  0.5 }">Check New York Times Connections for more info.
                         </div>
-                        <div class="four-by-four">
-                            <template x-for="(row, y) in grid">
-                                <template x-for="(cell, x) in row">
-                                    <div class="cell level10-cell" @click="row[x] = !row[x]" :class="cell && 'pressed'"
-                                        x-text="level10Cells[y][x]"
-                                        :style="{ fontSize: level10Cells[y][x]?.length > 9 ? '0.6rem' : '1rem' }">
-                                    </div>
-                                </template>
+                    </div>
+                    <div class="four-by-four">
+                        <template x-for="(row, y) in grid">
+                            <template x-for="(cell, x) in row">
+                                <div class="cell level10-cell" @click="row[x] = !row[x]" :class="cell && 'pressed'"
+                                    x-text="level10Cells[y][x]"
+                                    :style="{ fontSize: level10Cells[y][x]?.length > 9 ? '0.6rem' : '1rem' }">
+                                </div>
                             </template>
-                        </div>
-                        <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
+                        </template>
+                    </div>
+                    <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
 
-                        <hr />
-                        <div class="model-bottom-bar">
-                            <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
-                                @click="() => { state = $store.game.solveMat(10, level10, grid); if (state === 'solved') grid = make4x4() }"></button>
-                        </div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
+                            @click="() => { state = $store.game.solveMat(10, level10, grid); if (state === 'solved') grid = make4x4() }"></button>
                     </div>
                 </div>
             </div>
-            <!-- LEVEL 11 -->
-            <div class="level" x-show="$store.game.level >= 11" x-transition
-                x-data="{ state: 'unchecked', answer: '' }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    My handwriting is so bad it should be classified as a CAPTCHA.
+        </div>
+        <!-- LEVEL 11 -->
+        <div class="level" x-show="$store.game.level >= 11" x-transition x-data="{ state: 'unchecked', answer: '' }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                My handwriting is so bad it should be classified as a CAPTCHA.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 11">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
                 </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 11">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 11</div>
-                    </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 11</div>
                 </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked'">
-                        <div class="header">
-                            <div>Type the characters below</div>
-                            <br />
-                            <img src="assets/level11.jpg" style="width:100%;" />
-                        </div>
-                        <div class="single-input">
-                            <input x-model="answer" />
-                        </div>
-                        <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked'">
+                    <div class="header">
+                        <div>Type the characters below</div>
+                        <br />
+                        <img src="assets/level11.jpg" style="width:100%;" />
+                    </div>
+                    <div class="single-input">
+                        <input x-model="answer" />
+                    </div>
+                    <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
 
-                        <hr />
-                        <div class="model-bottom-bar">
-                            <button @click="state = $store.game.solveEq(11, level11, answer)">VERIFY</button>
-                        </div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button @click="state = $store.game.solveEq(11, level11, answer)">VERIFY</button>
                     </div>
                 </div>
             </div>
-            <!-- LEVEL 12 -->
-            <div class="level" x-show="$store.game.level >= 12" x-transition
-                x-data="{ state: 'unchecked', grid: make4x4() }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    Please ponder on this one for a bit.
+        </div>
+        <!-- LEVEL 12 -->
+        <div class="level" x-show="$store.game.level >= 12" x-transition
+            x-data="{ state: 'unchecked', grid: make4x4() }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Please ponder on this one for a bit.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 12">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
                 </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 12">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 12</div>
-                    </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 12</div>
                 </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked'">
-                        <div class="header">
-                            <div>Select all squares with</div>
-                            <div>the ship of theseus</div>
-                            <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
-                                (every part is replaced)
-                            </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked'">
+                    <div class="header">
+                        <div>Select all squares with</div>
+                        <div>the ship of theseus</div>
+                        <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
+                            (every part is replaced)
                         </div>
-                        <div class="four-by-four">
-                            <template x-for="(row, y) in grid">
-                                <template x-for="(cell, x) in row">
-                                    <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
-                                        <img src="./assets/ship-of-theseus.jpg"
-                                            :style="{ left: `-${x * 100}%`, top: `-${(3 - y) * 100}%` }" />
-                                    </div>
-                                </template>
+                    </div>
+                    <div class="four-by-four">
+                        <template x-for="(row, y) in grid">
+                            <template x-for="(cell, x) in row">
+                                <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
+                                    <img src="./assets/ship-of-theseus.jpg"
+                                        :style="{ left: `-${x * 100}%`, top: `-${(3 - y) * 100}%` }" />
+                                </div>
                             </template>
-                        </div>
-                        <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
-                        <hr />
-                        <div class="model-bottom-bar">
-                            <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
-                                @click="() => { state = eitherOr($store.game.solveMat(12, level2, grid), $store.game.solveGridCount(12, 8, grid)); if (state === 'solved') grid = make4x4() }"></button>
-                        </div>
+                        </template>
+                    </div>
+                    <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
+                            @click="() => { state = eitherOr($store.game.solveMat(12, level2, grid), $store.game.solveGridCount(12, 8, grid)); if (state === 'solved') grid = make4x4() }"></button>
                     </div>
                 </div>
             </div>
-            <!-- LEVEL 13 -->
-            <div class="level" x-show="$store.game.level >= 13" x-transition
-                x-data="{ state: 'unchecked', solve() { this.state = 'solved'; $store.game.solve(13) } }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    Any self respecting human will be able to reach 10.
+        </div>
+        <!-- LEVEL 13 -->
+        <div class="level" x-show="$store.game.level >= 13" x-transition
+            x-data="{ state: 'unchecked', solve() { this.state = 'solved'; $store.game.solve(13) } }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Any self respecting human will be able to reach 10.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 13">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
                 </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 13">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 13</div>
-                    </div>
-                </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'"
-                        x-effect="if (state === 'open' || state === 'wrong') $nextTick(() => level13StartRender($data))"
-                        x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked', level13State.running = false">
-                        <div class="header">
-                            <div>Get a score of at least 10 in</div>
-                            <div>flappy bot</div>
-                            <div :style="{ opacity: 0.5 }">
-                                Click to flap
-                            </div>
-                        </div>
-                        <div class="canvas">
-                            <canvas id="canvas-13" width="400" height="400" @mousedown="level13MouseDown"></canvas>
-                        </div>
-                        <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
-                    </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 13</div>
                 </div>
             </div>
-            <!-- LEVEL 14 -->
-            <div class="level" x-show="$store.game.level >= 14" x-transition
-                x-data="{ state: 'unchecked', grid: make4x4(), attempted: false }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    I don't think robots will be able to solve this one.
-                </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 14">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 14</div>
-                    </div>
-                </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="$event.target.tagName !== 'IMG' && (state = 'unchecked')">
-                        <div class="header">
-                            <div>Select all squares with</div>
-                            <div>ghosts</div>
-                            <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
-                            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'"
+                    x-effect="if (state === 'open' || state === 'wrong') $nextTick(() => level13StartRender($data))"
+                    x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked', level13State.running = false">
+                    <div class="header">
+                        <div>Get a score of at least 10 in</div>
+                        <div>flappy bot</div>
+                        <div :style="{ opacity: 0.5 }">
+                            Click to flap
                         </div>
-                        <div class="four-by-four" id="ghost-grid">
-                            <template x-for="(row, y) in grid">
-                                <template x-for="(cell, x) in row">
-                                    <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
-                                        <img src="./assets/hallway-no-ghosts.jpg"
-                                            :style="{ left: `-${x * 100}%`, top: `-${(3 - y) * 100}%` }" />
-                                    </div>
-                                </template>
+                    </div>
+                    <div class="canvas">
+                        <canvas id="canvas-13" width="400" height="400" @mousedown="level13MouseDown"></canvas>
+                    </div>
+                    <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
+                </div>
+            </div>
+        </div>
+        <!-- LEVEL 14 -->
+        <div class="level" x-show="$store.game.level >= 14" x-transition
+            x-data="{ state: 'unchecked', grid: make4x4(), attempted: false }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                I don't think robots will be able to solve this one.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 14">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 14</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="$event.target.tagName !== 'IMG' && (state = 'unchecked')">
+                    <div class="header">
+                        <div>Select all squares with</div>
+                        <div>ghosts</div>
+                        <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
+                        </div>
+                    </div>
+                    <div class="four-by-four" id="ghost-grid">
+                        <template x-for="(row, y) in grid">
+                            <template x-for="(cell, x) in row">
+                                <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
+                                    <img src="./assets/hallway-no-ghosts.jpg"
+                                        :style="{ left: `-${x * 100}%`, top: `-${(3 - y) * 100}%` }" />
+                                </div>
                             </template>
-                        </div>
-                        <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
-                        <hr />
-                        <div class="model-bottom-bar">
-                            <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
-                                @click="() => { state = $store.game.solveMat(14, level14, grid); if (state === 'solved') { grid = make4x4() } else if (state === 'wrong') attempted = true }"></button>
-                        </div>
+                        </template>
                     </div>
-                    <div x-show="attempted" x-transition style="cursor: pointer;" @click="level14AdClick">
-                        <img src="./assets/ad.svg">
+                    <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
+                            @click="() => { state = $store.game.solveMat(14, level14, grid); if (state === 'solved') { grid = make4x4() } else if (state === 'wrong') attempted = true }"></button>
                     </div>
+                </div>
+                <div x-show="attempted" x-transition style="cursor: pointer;" @click="level14AdClick">
+                    <img src="./assets/ad.svg">
                 </div>
             </div>
-            <!-- LEVEL 15 -->
-            <div class="level" x-show="$store.game.level >= 15" x-transition
-                x-data="{ state: 'unchecked', grid: make4x4() }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    I'm out of things to say -- but not out of CAPTCHAS!
+        </div>
+        <!-- LEVEL 15 -->
+        <div class="level" x-show="$store.game.level >= 15" x-transition
+            x-data="{ state: 'unchecked', grid: make4x4() }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                I'm out of things to say -- but not out of CAPTCHAS!
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 15">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
                 </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 15">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 15</div>
-                    </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 15</div>
                 </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked'">
-                        <div class="header">
-                            <div>Select all squares with</div>
-                            <div>objects that came first</div>
-                            <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
-                            </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked'">
+                    <div class="header">
+                        <div>Select all squares with</div>
+                        <div>objects that came first</div>
+                        <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
                         </div>
-                        <div class="four-by-four" style="background-color: lightgray">
-                            <template x-for="(row, y) in grid">
-                                <template x-for="(cell, x) in row">
-                                    <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
-                                        <img :src="`assets/level15/${y * 4 + x}.png`"
-                                            style="height:95px;width:95px;background:white;" />
-                                    </div>
-                                </template>
+                    </div>
+                    <div class="four-by-four" style="background-color: lightgray">
+                        <template x-for="(row, y) in grid">
+                            <template x-for="(cell, x) in row">
+                                <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
+                                    <img :src="`assets/level15/${y * 4 + x}.png`"
+                                        style="height:95px;width:95px;background:white;" />
+                                </div>
                             </template>
-                        </div>
-                        <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
+                        </template>
+                    </div>
+                    <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
 
-                        <hr />
-                        <div class="model-bottom-bar">
-                            <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
-                                @click="() => { state = $store.game.solveMat(15, level15, grid); if (state === 'solved') grid = make4x4() }"></button>
-                        </div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
+                            @click="() => { state = $store.game.solveMat(15, level15, grid); if (state === 'solved') grid = make4x4() }"></button>
                     </div>
                 </div>
             </div>
-            <!-- LEVEL 16 -->
-            <div class="level" x-show="$store.game.level >= 16" x-transition x-data="{
+        </div>
+        <!-- LEVEL 16 -->
+        <div class="level" x-show="$store.game.level >= 16" x-transition x-data="{
             state: 'unchecked',
             score: [0, 0],
             current: null,
@@ -2228,250 +2214,245 @@ function getThreats(ghosts) {
                 }
             }
         }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    Childhood classic.
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Childhood classic.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 16">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
                 </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 16">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 16</div>
-                    </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 16</div>
                 </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked'">
-                        <div class="header">
-                            <div>Beat the computer at</div>
-                            <div>rock paper scissors</div>
-                            <div :style="{ opacity: 0.5 }">First to 5 wins</div>
-                        </div>
-                        <div class="canvas">
-                            <div class="rps">
-                                <div class="rps-status">
-                                    <div x-text="score[0] + ' to ' + score[1]"></div>
-                                    <div
-                                        x-text="current ? ['Rock','Paper','Scissors'][current[0]] + ' vs ' + ['Rock','Paper','Scissors'][current[1]] : 'Pick An Option'">
-                                    </div>
-                                    <div x-text="status || 'Nothing has been played yet'"></div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked'">
+                    <div class="header">
+                        <div>Beat the computer at</div>
+                        <div>rock paper scissors</div>
+                        <div :style="{ opacity: 0.5 }">First to 5 wins</div>
+                    </div>
+                    <div class="canvas">
+                        <div class="rps">
+                            <div class="rps-status">
+                                <div x-text="score[0] + ' to ' + score[1]"></div>
+                                <div
+                                    x-text="current ? ['Rock','Paper','Scissors'][current[0]] + ' vs ' + ['Rock','Paper','Scissors'][current[1]] : 'Pick An Option'">
                                 </div>
-                                <div class="rps-buttons">
-                                    <button @click="play(0)">Rock</button>
-                                    <button @click="play(1)">Paper</button>
-                                    <button @click="play(2)">Scissors</button>
+                                <div x-text="status || 'Nothing has been played yet'"></div>
+                            </div>
+                            <div class="rps-buttons">
+                                <button @click="play(0)">Rock</button>
+                                <button @click="play(1)">Paper</button>
+                                <button @click="play(2)">Scissors</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
+
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button :disabled="score[0] < 5"
+                            @click="() => { if (score[0] >= 5) state = $store.game.solve(16); if (state === 'solved') reset() }">FINISH</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- LEVEL 17 -->
+        <div class="level" x-show="$store.game.level >= 17" x-transition
+            x-data="{ state: 'unchecked', grid: make4x4() }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Yum.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 17">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 17</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked'">
+                    <div class="header">
+                        <div>Select all squares that</div>
+                        <div>would be hard to eat</div>
+                        <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
+                        </div>
+                    </div>
+                    <div class="four-by-four" style="background-color: lightgray">
+                        <template x-for="(row, y) in grid">
+                            <template x-for="(cell, x) in row">
+                                <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
+                                    <img :src="`assets/level17/${y * 4 + x}.png`"
+                                        style="height:95px;width:95px;background:white;" />
                                 </div>
-                            </div>
-                        </div>
-                        <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
-
-                        <hr />
-                        <div class="model-bottom-bar">
-                            <button :disabled="score[0] < 5"
-                                @click="() => { if (score[0] >= 5) state = $store.game.solve(16); if (state === 'solved') reset() }">FINISH</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- LEVEL 17 -->
-            <div class="level" x-show="$store.game.level >= 17" x-transition
-                x-data="{ state: 'unchecked', grid: make4x4() }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    Yum.
-                </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 17">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 17</div>
-                    </div>
-                </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked'">
-                        <div class="header">
-                            <div>Select all squares that</div>
-                            <div>would be hard to eat</div>
-                            <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
-                            </div>
-                        </div>
-                        <div class="four-by-four" style="background-color: lightgray">
-                            <template x-for="(row, y) in grid">
-                                <template x-for="(cell, x) in row">
-                                    <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
-                                        <img :src="`assets/level17/${y * 4 + x}.png`"
-                                            style="height:95px;width:95px;background:white;" />
-                                    </div>
-                                </template>
                             </template>
-                        </div>
-                        <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
+                        </template>
+                    </div>
+                    <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
 
-                        <hr />
-                        <div class="model-bottom-bar">
-                            <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
-                                @click="() => { state = $store.game.solveMat(17, level17, grid); if (state === 'solved') grid = make4x4() }"></button>
-                        </div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
+                            @click="() => { state = $store.game.solveMat(17, level17, grid); if (state === 'solved') grid = make4x4() }"></button>
                     </div>
                 </div>
             </div>
-            <!-- LEVEL 18 -->
-            <div class="level" x-show="$store.game.level >= 18" x-transition
-                x-data="{ state: 'unchecked', grid: chessBoard() }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    I only know of one robot that can do the following, and that robot is a fish.
+        </div>
+        <!-- LEVEL 18 -->
+        <div class="level" x-show="$store.game.level >= 18" x-transition
+            x-data="{ state: 'unchecked', grid: chessBoard() }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                I only know of one robot that can do the following, and that robot is a fish.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 18">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
                 </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 18">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 18</div>
-                    </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 18</div>
                 </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked'">
-                        <div class="header">
-                            <div>Select all valid moves for the</div>
-                            <div>white queen</div>
-                            <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
-                            </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked'">
+                    <div class="header">
+                        <div>Select all valid moves for the</div>
+                        <div>white queen</div>
+                        <div :style="{ opacity: grid.flat().some(Boolean) ? 0.5 : 1 }">If there are none, click skip
                         </div>
-                        <div class="chess-board">
-                            <template x-for="(row, y) in grid">
-                                <template x-for="(cell, x) in row">
-                                    <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
-                                        <img src="./assets/chess-board.png"
-                                            :style="{ left: `-${x * 100}%`, top: `-${(7 - y) * 100}%` }" />
-                                    </div>
-                                </template>
+                    </div>
+                    <div class="chess-board">
+                        <template x-for="(row, y) in grid">
+                            <template x-for="(cell, x) in row">
+                                <div class="cell" @click="row[x] = !row[x]" :class="cell && 'pressed'">
+                                    <img src="./assets/chess-board.png"
+                                        :style="{ left: `-${x * 100}%`, top: `-${(7 - y) * 100}%` }" />
+                                </div>
                             </template>
-                        </div>
-                        <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
-                        <hr />
-                        <div class="model-bottom-bar">
-                            <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
-                                @click="() => { state = $store.game.solveMat(18, level18, grid); if (state === 'solved') grid = chessBoard() }"></button>
-                        </div>
+                        </template>
+                    </div>
+                    <div x-show="state === 'wrong'" class="error try-again">Please try again.</div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button x-text="grid.flat().some(Boolean) ? 'VERIFY' : 'SKIP'"
+                            @click="() => { state = $store.game.solveMat(18, level18, grid); if (state === 'solved') grid = chessBoard() }"></button>
                     </div>
                 </div>
             </div>
-            <!-- LEVEL 19 -->
-            <div class="level" x-show="$store.game.level >= 19" x-transition
-                x-data="{ state: 'unchecked', solve() { this.state = 'solved'; $store.game.solve(19) } }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    Are you over 18?
+        </div>
+        <!-- LEVEL 19 -->
+        <div class="level" x-show="$store.game.level >= 19" x-transition
+            x-data="{ state: 'unchecked', solve() { this.state = 'solved'; $store.game.solve(19) } }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Are you over 18?
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 19">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
                 </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 19">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 19</div>
-                    </div>
-                </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'poor'"
-                        x-effect="if (state === 'open' || state === 'poor') $nextTick(() => level19StartRender($data))"
-                        x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked', level19State.running = false">
-                        <div class="header">
-                            <div>Win it big in this</div>
-                            <div>slot machine</div>
-                            <div :style="{ opacity: 0.5 }">
-                                $0.50 per spin.
-                            </div>
-                        </div>
-                        <div class="canvas">
-                            <canvas id="canvas-19" width="400" height="400"></canvas>
-                        </div>
-                        <div x-show="state === 'poor'" class="error try-again">Too Poor! Go flip some more burgers or
-                            something.</div>
-                        <button class="spin-button" @click="level19Spin($data)">SPIN IT</button>
-                    </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 19</div>
                 </div>
             </div>
-            <!-- LEVEL 20 -->
-            <div class="level" x-show="$store.game.level >= 20" x-transition
-                x-data="{ state: 'unchecked', solve() { this.state = 'solved'; $store.game.solve(20) }, penDown: false, won: false }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    More free labor yay!
-                </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 20">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 20</div>
-                    </div>
-                </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked'">
-                        <div class="header">
-                            <div>Clean this</div>
-                            <div>dirty wall</div>
-                            <div :style="{ opacity: 0.5 }">
-                                (By cleaning this wall you agree to not receiving any compensation from your labor)
-                            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'poor'"
+                    x-effect="if (state === 'open' || state === 'poor') $nextTick(() => level19StartRender($data))"
+                    x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked', level19State.running = false">
+                    <div class="header">
+                        <div>Win it big in this</div>
+                        <div>slot machine</div>
+                        <div :style="{ opacity: 0.5 }">
+                            $0.50 per spin.
                         </div>
-                        <div class="canvas">
-                            <canvas id="canvas-20" width="400" height="400" x-init="level20Clear"
-                                @mouseup="penDown = false" @mousedown="penDown = true" @mousemove="() => {
+                    </div>
+                    <div class="canvas">
+                        <canvas id="canvas-19" width="400" height="400"></canvas>
+                    </div>
+                    <div x-show="state === 'poor'" class="error try-again">Too Poor! Go flip some more burgers or
+                        something.</div>
+                    <button class="spin-button" @click="level19Spin($data)">SPIN IT</button>
+                </div>
+            </div>
+        </div>
+        <!-- LEVEL 20 -->
+        <div class="level" x-show="$store.game.level >= 20" x-transition
+            x-data="{ state: 'unchecked', solve() { this.state = 'solved'; $store.game.solve(20) }, penDown: false, won: false }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                More free labor yay!
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 20">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 20</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked'">
+                    <div class="header">
+                        <div>Clean this</div>
+                        <div>dirty wall</div>
+                        <div :style="{ opacity: 0.5 }">
+                            (By cleaning this wall you agree to not receiving any compensation from your labor)
+                        </div>
+                    </div>
+                    <div class="canvas">
+                        <canvas id="canvas-20" width="400" height="400" x-init="level20Clear" @mouseup="penDown = false"
+                            @mousedown="penDown = true" @mousemove="() => {
                                 if (penDown) level20Draw($event);
                                 if (penDown && level20CheckWin()) won = true
                             }"></canvas>
-                        </div>
-                        <hr />
-                        <div class="model-bottom-bar">
-                            <button :disabled="!won" @click="() => {
+                    </div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <button :disabled="!won" @click="() => {
                             if (won) {
                                 won = false;
                                 $store.game.solve(20);
@@ -2480,268 +2461,252 @@ function getThreats(ghosts) {
                                 penDown = false
                             }
                         }">SUBMIT</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- LEVEL 21 -->
+        <div class="level" x-show="$store.game.level >= 21" x-transition x-data="{ state: 'unchecked' }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Ok you know what this is getting boring, let's do some ghost busting.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 21">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'; spawnUpgrades()"
+                        :x-state="state" id="upgrade-spawn">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 21</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    x-effect="$store.game.upgradesSlotted ? (state = 'solved', $store.game.solve(21)) : null"
+                    @click.outside="$event.target.tagName !== 'IMG' && (state = 'unchecked')">
+                    <div class="header">
+                        <div>Upgrade your</div>
+                        <div>GHOSTTECTOR</div>
+                        <div :style="{ opacity: 0.5 }">
+                            The Ghostbusters are calling.
+                        </div>
+                    </div>
+                    <div class="canvas">
+                        <canvas width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- LEVEL 22 -->
+        <div class="level" x-show="$store.game.level >= 22" x-transition x-data="{ state: 'unchecked', progress: 0 }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Alright let's get this show on the road.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 22">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 22</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked'">
+                    <div class="header">
+                        <div>Hack into the</div>
+                        <div>mainframe</div>
+                        <div :style="{ opacity: 0.5 }">
+                            Beep boop beep boop.
+                        </div>
+                    </div>
+                    <div class="canvas overlapped">
+                        <div class="terminal" id="level22Terminal"
+                            x-init="this.addEventListener('keydown', (e) => (state === 'open') && (progress += Math.floor(Math.random() * 5) + 2))">
+                            <pre x-text="level22Text.substring(0, progress)"></pre>
+                        </div>
+                        <div class="access-granted"
+                            x-show="progress && isOverflown(document.getElementById('level22Terminal'))"
+                            x-transition:enter
+                            x-effect="(progress && isOverflown(document.getElementById('level22Terminal'))) ? setTimeout(() => (state = 'solved', $store.game.solve(22), progress = 0),1500) : null">
+                            ACCESS GRANTED</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- LEVEL 23 -->
+        <div class="level" x-show="$store.game.level >= 23" x-transition x-data="{ state: 'unchecked' }">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                TRHEAT DETECTED (drag jigsaw to fire)
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 23">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'; spawnBoss()"
+                        :x-state="state" id="boss-spawn">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 23</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="$event.target.tagName !== 'IMG' && (state = 'unchecked')"
+                    x-effect="bossGhost.hp <= 0 && (state === 'solved', $store.game.solve(23), $store.game.bossSpawned = false, bossGhost.hp = 6, ghosts[3].size = [300, 400])">
+                    <div class="header">
+                        <div>Defeat the</div>
+                        <div>ghost</div>
+                        <div :style="{ opacity: 0.5 }">
+                            Good luck soldier.
+                        </div>
+                    </div>
+                    <div class="canvas">
+                        <canvas width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- LEVEL 24 -->
+        <div class="level" x-show="$store.game.level >= 24" x-transition
+            x-data="{ state: 'unchecked', frustrated: false, progress: 0 }"
+            x-effect="if (state === 'open' || state === 'wrong') $nextTick(() => level24Start($data))">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Humans get frustrated.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 24">
+                <div>
+                    <button class="checkbox"
+                        @click="state = state != 'open' ? 'open' : 'unchecked'; frustrated = (localStorage.frustrated ? true : (localStorage.frustrated = true, false))"
+                        :x-state="state">
+                    </button>
+                    I'm not a robot
+                </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 24</div>
+                </div>
+            </div>
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked', level24Running = false">
+                    <div class="header">
+                        <div>Show</div>
+                        <div>frustration</div>
+                        <div :style="{ opacity: 0.5 }" x-text="`Progress: ${(progress * 100).toFixed(2)}%`">
+                            Progress - xx.xx%
+                        </div>
+                    </div>
+                    <div class="single-input">
+                        <div class="bar">
+                            <div class="bar-fill" :style="{ width: `${progress * 100}%` }"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- LEVEL 21 -->
-            <div class="level" x-show="$store.game.level >= 21" x-transition x-data="{ state: 'unchecked' }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    Ok you know what this is getting boring, let's do some ghost busting.
+        </div>
+        <!-- LEVEL 25 -->
+        <div class="level" x-show="$store.game.level >= 25" x-transition
+            x-data="{ state: 'unchecked', message: '', msgs: [], ws: null, autoscroll: true, human: false, room: $persist('') }"
+            x-effect="state === 'open' ? level25Connect($data) : null">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Alright thats it.
+            </div>
+            <div class="spacer"></div>
+            <div class="captcha" :data-solved="$store.game.level > 25">
+                <div>
+                    <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'" :x-state="state">
+                    </button>
+                    I'm not a robot
                 </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 21">
-                    <div>
-                        <button class="checkbox"
-                            @click="state = state != 'open' ? 'open' : 'unchecked'; spawnUpgrades()" :x-state="state"
-                            id="upgrade-spawn">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 21</div>
-                    </div>
-                </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        x-effect="$store.game.upgradesSlotted ? (state = 'solved', $store.game.solve(21)) : null"
-                        @click.outside="$event.target.tagName !== 'IMG' && (state = 'unchecked')">
-                        <div class="header">
-                            <div>Upgrade your</div>
-                            <div>GHOSTTECTOR</div>
-                            <div :style="{ opacity: 0.5 }">
-                                The Ghostbusters are calling.
-                            </div>
-                        </div>
-                        <div class="canvas">
-                            <canvas width="400" height="400"></canvas>
-                        </div>
-                    </div>
+                <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
+                    <div>CAPTCHA 25</div>
                 </div>
             </div>
-            <!-- LEVEL 22 -->
-            <div class="level" x-show="$store.game.level >= 22" x-transition
-                x-data="{ state: 'unchecked', progress: 0 }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    Alright let's get this show on the road.
-                </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 22">
+            <div class="captcha-model-container">
+                <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
+                    @click.outside="state = 'unchecked'">
+                    <div class="header">
+                        <div>Convince me</div>
+                        <div>you are not a robot</div>
+                        <div :style="{ opacity: 0.5 }">Please wait for me to respond, a sound will play if the tab
+                            is open and a message is recieved. Any messages sent when the tab is closed will be
+                            saved. Come back any time.
+                        </div>
+                    </div>
                     <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 22</div>
-                    </div>
-                </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked'">
-                        <div class="header">
-                            <div>Hack into the</div>
-                            <div>mainframe</div>
-                            <div :style="{ opacity: 0.5 }">
-                                Beep boop beep boop.
-                            </div>
-                        </div>
-                        <div class="canvas overlapped">
-                            <div class="terminal" id="level22Terminal"
-                                x-init="this.addEventListener('keydown', (e) => (state === 'open') && (progress += Math.floor(Math.random() * 5) + 2))">
-                                <pre x-text="level22Text.substring(0, progress)"></pre>
-                            </div>
-                            <div class="access-granted"
-                                x-show="progress && isOverflown(document.getElementById('level22Terminal'))"
-                                x-transition:enter
-                                x-effect="(progress && isOverflown(document.getElementById('level22Terminal'))) ? setTimeout(() => (state = 'solved', $store.game.solve(22), progress = 0),1500) : null">
-                                ACCESS GRANTED</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- LEVEL 23 -->
-            <div class="level" x-show="$store.game.level >= 23" x-transition x-data="{ state: 'unchecked' }">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    TRHEAT DETECTED (drag jigsaw to fire)
-                </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 23">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'; spawnBoss()"
-                            :x-state="state" id="boss-spawn">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 23</div>
-                    </div>
-                </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="$event.target.tagName !== 'IMG' && (state = 'unchecked')"
-                        x-effect="bossGhost.hp <= 0 && (state === 'solved', $store.game.solve(23), $store.game.bossSpawned = false, bossGhost.hp = 6, ghosts[3].size = [300, 400])">
-                        <div class="header">
-                            <div>Defeat the</div>
-                            <div>ghost</div>
-                            <div :style="{ opacity: 0.5 }">
-                                Good luck soldier.
-                            </div>
-                        </div>
-                        <div class="canvas">
-                            <canvas width="400" height="400"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- LEVEL 24 -->
-            <div class="level" x-show="$store.game.level >= 24" x-transition
-                x-data="{ state: 'unchecked', frustrated: false, progress: 0 }"
-                x-effect="if (state === 'open' || state === 'wrong') $nextTick(() => level24Start($data))">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    Humans get frustrated.
-                </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 24">
-                    <div>
-                        <button class="checkbox"
-                            @click="state = state != 'open' ? 'open' : 'unchecked'; frustrated = (localStorage.frustrated ? true : (localStorage.frustrated = true, false))"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 24</div>
-                    </div>
-                </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked', level24Running = false">
-                        <div class="header">
-                            <div>Show</div>
-                            <div>frustration</div>
-                            <div :style="{ opacity: 0.5 }" x-text="`Progress: ${(progress * 100).toFixed(2)}%`">
-                                Progress - xx.xx%
-                            </div>
-                        </div>
-                        <div class="single-input">
-                            <div class="bar">
-                                <div class="bar-fill" :style="{ width: `${progress * 100}%` }"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- LEVEL 25 -->
-            <div class="level" x-show="$store.game.level >= 25" x-transition
-                x-data="{ state: 'unchecked', message: '', msgs: [], ws: null, autoscroll: true, human: false, room: $persist('') }"
-                x-effect="state === 'open' ? level25Connect($data) : null">
-                <div class="error">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon">
-                        <path fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    Alright thats it.
-                </div>
-                <div class="spacer"></div>
-                <div class="captcha" :data-solved="$store.game.level > 25">
-                    <div>
-                        <button class="checkbox" @click="state = state != 'open' ? 'open' : 'unchecked'"
-                            :x-state="state">
-                        </button>
-                        I'm not a robot
-                    </div>
-                    <div class="captcha-info"><img src="./assets/logo.png" height="32" width="32">
-                        <div>CAPTCHA 25</div>
-                    </div>
-                </div>
-                <div class="captcha-model-container">
-                    <div x-show="state === 'open' || state === 'wrong'" x-transition.opacity class="captcha-model"
-                        @click.outside="state = 'unchecked'">
-                        <div class="header">
-                            <div>Convince me</div>
-                            <div>you are not a robot</div>
-                            <div :style="{ opacity: 0.5 }">Please wait for me to respond, a sound will play if the tab
-                                is open and a message is recieved. Any messages sent when the tab is closed will be
-                                saved. Come back any time.
-                            </div>
-                        </div>
-                        <div>
-                            <div class="msgs" id="msgs"
-                                x-effect="msgs; if (autoscroll) $nextTick(() => $el.scrollTo(0, $el.scrollHeight))">
-                                <div><b>aiden</b>: <span>convince me you are human</span></div>
+                        <div class="msgs" id="msgs"
+                            x-effect="msgs; if (autoscroll) $nextTick(() => $el.scrollTo(0, $el.scrollHeight))">
+                            <div><b>aiden</b>: <span>convince me you are human</span></div>
 
-                                <template x-for="msg in msgs">
-                                    <div>
-                                        <b x-text="msg.admin ? 'aiden' : 'you'"></b>: <span x-text="msg.msg"></span>
-                                    </div>
-                                </template>
-                                <div x-show="human" :style="{ opacity: 0.5 }"><em>aiden has verified your humanness</em>
+                            <template x-for="msg in msgs">
+                                <div>
+                                    <b x-text="msg.admin ? 'aiden' : 'you'"></b>: <span x-text="msg.msg"></span>
                                 </div>
-
+                            </template>
+                            <div x-show="human" :style="{ opacity: 0.5 }"><em>aiden has verified your humanness</em>
                             </div>
+
                         </div>
-                        <hr />
-                        <div class="model-bottom-bar">
-                            <input x-model="message" style="flex: 1;" placeholder="Message me">
-                            <button @click="level25Send($data)">SEND</button>
-                        </div>
+                    </div>
+                    <hr />
+                    <div class="model-bottom-bar">
+                        <input x-model="message" style="flex: 1;" placeholder="Message me">
+                        <button @click="level25Send($data)">SEND</button>
                     </div>
                 </div>
             </div>
-            <div class="win" x-show="$store.game.level >= 26" x-transition>
-                <h1>Congrats. You are not a robot.</h1>
-                <p>thanks for playing my stupid little game &lt;3</p>
-                <p>more games are coming in the future :)</p>
-                <br />
-                <br />
-                <p>love,</p>
-                <a href="https://voxal.dev"><img src="assets/aiden-shi.png"></a>
-            </div>
+        </div>
+        <div class="win" x-show="$store.game.level >= 26" x-transition>
+            <h1>Congrats. You are not a robot.</h1>
+            <p>thanks for playing my stupid little game &lt;3</p>
+            <p>more games are coming in the future :)</p>
+            <br />
+            <br />
+            <p>love,</p>
+            <a href="https://voxal.dev"><img src="assets/aiden-shi.png"></a>
+        </div>
 
 
-            <!--
-    *Select all vehicles in the park
-    *Trolley problem
-    *click all squares that used to be dinosaurs
-    !Measuring Frustration
-    !Turing test
-
-    -Select all traffic lights (quick the car is approaching the intersection)
-    \Select all stable conways of game of life configurations
-    \Take control of our self driving car
-    Something stupid about proteins
-    -something stupid about code compiling
-
+        <!--
     THINGS TO RESOLVE:
     - flood fill // no.
     - add boss defeated screen to 23
-    - actually use images for the ghostector canvas
+    - still fix boss not disappearing
 -->
-            <div class="bottom-padding" x-show="$store.game.level >= 1 && $store.game.level <= 25"></div>
-            <div class="bottom-padding" x-show="$store.game.level === 5 || $store.game.level === 23"></div>
+        <div class="bottom-padding" x-show="$store.game.level >= 1 && $store.game.level <= 25"></div>
+        <div class="bottom-padding" x-show="$store.game.level === 5 || $store.game.level === 23"></div>
 
     </main>
 </body>

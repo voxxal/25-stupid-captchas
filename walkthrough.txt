@@ -1,0 +1,191 @@
+=x= AIDEN SHI'S INCREDIBLE WALKTHROUGH TO 25 STUPID CAPTCHAS =x=
+
+this game is pretty stupid, so here is a little guide to help 
+you if you get stuck.
+
+for any "select all with" puzzles, selected tiles will be
+denoted with a "#"
+
+# Level 1
+no tricks played here, the following are the 2 possible 
+solutions.
+oo## | oo##
+oo## | o###
+oo## | oo##
+oo## | oo##
+
+# Level 2
+oooo
+oooo
+oooo
+oooo
+
+don't select any tiles. this is a reference to Rene Magritte's
+painting "The Treachery of Images" [1]. the text reads "this is
+not a pipe" because it is not, but rather an image.
+
+# Level 3
+the answer is D
+
+# Level 4
+drag the wire from the left to the right of the same color.
+
+# Level 5
+select at least 3 squares then press the button.
+the button is pressable, keep trying!
+
+# Level 6
+the captcha actually says "I am a robot." drag the word not from
+the text between the word "am" and "a." then press the button
+
+# Level 7
+the maze is unsolvable. instead draw the red line around the
+maze.
+
+# Level 8
+drag the patty to the stoves, wait for it to change color once.
+follow the following rules when putting together the burger.
+- start with the bottom bun and end with the top bun
+- use at least 1 cooked patty in the burger
+- do not put cheese under the patty (unless you are stacking
+  patties)
+- don't repeat one ingredient twice in a row
+
+# Level 9
+tl;dr
+oooo
+o#o#
+##oo
+oooo
+
+long answer:
+o1o1
+3ooo
+oo3o
+2o1o
+
+there are 3 mines in the following tiles
+o1 1
+3o 
+oo3 
+2 1 
+
+there is only one tile in the following tiles
+o1 1
+3o 
+  3 
+2 1 
+
+thus these 2 tiles must have mines
+ 1 1
+3  
+##3 
+2 1 
+
+because of these mines the other 3 must have 2 more mines here
+ 1 1
+3ooo
+##3 
+2 1 
+
+the only valid configuration of two mines is the following
+ 1 1
+3# #
+##3 
+2 1 
+
+# Level 10
+i dunno go search up nyt connections [2] and play it, then
+select those that fall under the purple category.
+
+# Level 11
+bDKlrDS
+
+# Level 12
+referring to the ship of theseus [3], which asks the question
+if every part of a boat is replaced, is it still the same boat?
+
+both answers are accepted, if you think there its a different
+boat, just skip, otherwise if you think the boat is the same,
+select the boat.
+
+# Level 13
+if you can't get 10 all i can say is get good.
+
+# Level 14
+make an incorrect answer, an ad will pop up. click the ad.
+if you don't have enough money play level 8 a couple more times
+for the money.
+
+press the buy button and navigate back to the original tab,
+drag the GHOSTECTOR over the captcha and select all tiles with a
+ghost.
+
+#ooo
+#ooo
+oo##
+oo##
+
+# Level 15
+- yahoo came before google
+- the fruit orange came before the color
+- the egg came before the chicken
+- deepmind came before openai
+- horses came before the car
+- floppy disks came before CDs (no its not a save button)
+- coca cola came before pepsi
+- recaptcha 1 came before recaptcha 2
+
+o#oo
+o##o
+#oo#
+##o#
+
+# Level 16
+the computer plays a beat last strategy, so select what would 
+lose to whatever you played last round.
+- if you played rock last round, play scissors
+- if you played paper last round, play rock
+- if you played scissors last round, play paper
+
+# Level 17
+rock, baby, and dog are required answers
+anything else that could be considered "hard" to eat are optional
+
+# Level 18
+oooooooo
+oo#ooooo
+ooo#oooo
+ooo#o###
+oooo##oo
+oooo#ooo
+oooo#ooo
+oooooooo
+
+# Level 19
+just win lol
+
+# Level 20
+drag your mouse over the wall to clean it, clean at least 80% of
+the wall to continue.
+
+# Level 21
+- the screen attaches to the top of the GHOSTECTOR
+- the crosshair attaches to the left of the GHOSTECTOR
+- the battery slot attaches to the right of the GHOSTECTOR
+- the battery goes inside the battery slot
+
+# Level 22
+mash that keyboard
+
+# Level 23
+drag the jigsaw from the left onto the gray spot to fire, every
+time you hit the ghost, it teleports to a random part of your
+screen. hit it 6 times to win.
+
+# Level 24
+frustrated people reload the page.
+
+[1] https://en.wikipedia.org/wiki/The_Treachery_of_Images
+[2] https://www.nytimes.com/games/connections
+[3] https://en.wikipedia.org/wiki/Ship_of_Theseus
